@@ -4,6 +4,7 @@ import pygame
 from pytmx.util_pygame import load_pygame
 
 from player import Player
+from monster import Monster
 from settings import *
 from sprite import Bullet
 from sprite import Sprite
@@ -61,11 +62,28 @@ class Main:
         self.all_sprites = AllSprites()
         self.colliders = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
+        self.enemy = pygame.sprite.Group()
 
         self.setup()
 
     def create_bullet(self, pos, dir):
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
+
+    def bullet_collision(self):
+
+        for wall in self.colliders:
+            pygame.sprite.spritecollide(wall, self.bullets, True,  pygame.sprite.collide_mask)
+
+        for bullet in self.bullets.sprites():
+            sprites = pygame.sprite.spritecollide(bullet, self.enemy, False, pygame.sprite.collide_mask)
+
+            if sprites:
+                bullet.kill()
+                for sprite in sprites:
+                    sprite.damage(1)
+
+        if pygame.sprite.spritecollide(self.player, self.bullets, True, pygame.sprite.collide_mask):
+            self.player.damage(1)
 
     def setup(self):
         tmx_map = load_pygame("../data/map..tmx")
@@ -80,7 +98,20 @@ class Main:
                     groups=self.all_sprites,
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet
+                    create_bullet=self.create_bullet,
+                    health = 10
+                )
+        for obj in tmx_map.get_layer_by_name("enemy"):
+            if obj.name == "Enemy":
+                self.monster = Monster(
+                    pos=(obj.x, obj.y),
+                    groups=[self.all_sprites, self.enemy],
+                    path=PATHS["player"],
+                    collision_sprites=self.colliders,
+                    create_bullet=self.create_bullet,
+                    health = 5,
+                    player=self.player,
+                    shot_speed=500
                 )
 
     def run(self):
@@ -94,6 +125,7 @@ class Main:
 
             # update groups
             self.all_sprites.update(dt)
+            self.bullet_collision()
 
             # draw groups
             self.display_surface.fill("black")

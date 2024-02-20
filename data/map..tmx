@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="2">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="16" height="16" tilewidth="16" tileheight="16" infinite="0" nextlayerid="7" nextobjectid="8">
  <tileset firstgid="1" name="ninja" tilewidth="16" tileheight="16" tilecount="572" columns="22">
   <image source="NinjaAdventure/NinjaAdventure/Backgrounds/Tilesets/TilesetFloor.png" width="352" height="417"/>
  </tileset>
  <tileset firstgid="573" source="colliders.tsx"/>
- <objectgroup id="3" name="player">
-  <object id="1" name="Player" x="136.056" y="138.913">
-   <point/>
-  </object>
- </objectgroup>
  <layer id="1" name="bg" width="16" height="16">
   <data encoding="csv">
 1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,3,
@@ -49,4 +44,20 @@
 823,823,823,823,823,823,823,0,0,0,823,823,823,823,823,823
 </data>
  </layer>
+ <objectgroup id="5" name="player">
+  <object id="3" name="Player" x="134.737" y="132.648">
+   <point/>
+  </object>
+ </objectgroup>
+ <objectgroup id="6" name="enemy">
+  <object id="5" name="Enemy" x="45.4345" y="48.0457">
+   <point/>
+  </object>
+  <object id="6" name="Enemy" x="87.2134" y="220.384">
+   <point/>
+  </object>
+  <object id="7" name="Enemy" x="216.206" y="85.6467">
+   <point/>
+  </object>
+ </objectgroup>
 </map>
