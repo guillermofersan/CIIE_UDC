@@ -1,7 +1,7 @@
 import pygame
 from pygame.math import Vector2 as vector
 from entity import Entity
-
+from os import walk
 
 class Enemy:
     def get_player_distance_direction(self):
@@ -85,6 +85,19 @@ class Monster(Entity,Enemy):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+
+    def import_assets(self, path):
+
+        for index, folder in enumerate(walk(path)):
+            if index == 0:
+                for name in folder[1]:
+                    self.animations[name] = []
+            else:
+                for file_name in sorted(folder[2], key=lambda string: int(string.split('.')[0])):
+                    path = folder[0].replace("\\", "/") + "/" + file_name
+                    surf = pygame.image.load(path).convert_alpha()
+                    key = folder[0].split("\\")[1]
+                    self.animations[key].append(surf)
 
     def collision(self, dir):
         for sprite in self.collision_sprites.sprites():

@@ -22,7 +22,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed = 100
 
         # colisiones
-        self.hitbox = self.rect.inflate(0, -self.rect.height / 2)
+        self.hitbox = self.rect.inflate(-self.rect.width * 0.5, -self.rect.height/4)
         self.collision_sprites = collision_sprites
 
         # ataque
@@ -62,25 +62,13 @@ class Entity(pygame.sprite.Sprite):
 
     def get_status(self):
         # idle
-        if self.dir.x == 0 and self.dir.y == 0:
+        if self.dir.x == 0 and self.dir.y == 0 and self.status != "death":
             self.status = self.status.split("_")[0] + "_idle"
 
         # ataque
-        if self.is_attacking:
+        if self.is_attacking and self.status != "death":
             self.status = self.status.split("_")[0] + "_attack"
 
-    def import_assets(self, path):
-
-        for index, folder in enumerate(walk(path)):
-            if index == 0:
-                for name in folder[1]:
-                    self.animations[name] = []
-            else:
-                for file_name in sorted(folder[2], key=lambda string: int(string.split('.')[0])):
-                    path = folder[0].replace("\\", "/") + "/" + file_name
-                    surf = pygame.image.load(path).convert_alpha()
-                    key = folder[0].split("\\")[1]
-                    self.animations[key].append(surf)
 
 
     def move(self, dt):

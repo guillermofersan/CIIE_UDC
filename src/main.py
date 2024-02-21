@@ -8,7 +8,7 @@ from monster import Monster
 from settings import *
 from sprite import Bullet
 from sprite import Sprite
-
+from utilities import *
 
 class AllSprites(pygame.sprite.Group):
     def __init__(self):
@@ -33,6 +33,8 @@ class AllSprites(pygame.sprite.Group):
         self.bg_surf = pygame.image.load('../graphics/other/bg.png').convert_alpha()
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
 
+
+
     def custom_draw(self):
         self.internal_surf.fill("black")
 
@@ -56,6 +58,10 @@ class Main:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("demo")
         self.clock = pygame.time.Clock()
+        arrow_surf = pygame.image.load(PATHS["arrow"]).convert_alpha()
+        self.arrow = []
+        for i in range(4):
+            self.arrow.append(get_image(arrow_surf,i,0,32, 32, 1, (0,0,0)))
         self.bullet_surf = pygame.image.load("../graphics/weapon/bullet.png").convert_alpha()
 
         # groups
@@ -64,10 +70,23 @@ class Main:
         self.bullets = pygame.sprite.Group()
         self.enemy = pygame.sprite.Group()
 
+        self.player_death = False
+
         self.setup()
 
+    def create_arrow(self, pos, dir):
+        match self.player.status.split("_")[0]:
+            case "left": arrow = self.arrow[1]
+            case "right": arrow = self.arrow[3]
+            case "up": arrow = self.arrow[0]
+            case "down": arrow = self.arrow[2]
+        Bullet(pos, dir, arrow, [self.all_sprites, self.bullets])
+    
     def create_bullet(self, pos, dir):
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
+    
+    def death(self):
+        self.player_death = True
 
     def bullet_collision(self):
 
@@ -98,15 +117,16 @@ class Main:
                     groups=self.all_sprites,
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet,
-                    health = 10
+                    create_bullet=self.create_arrow,
+                    health = 10,
+                    death = self.death
                 )
         for obj in tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy":
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["player"],
+                    path=PATHS["enemy"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_bullet,
                     health = 5,
@@ -114,22 +134,34 @@ class Main:
                     shot_speed=500
                 )
 
+
     def run(self):
         while True:
-            # event loop
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    pygame.quit()
-                    sys.exit()
-            dt = self.clock.tick() / 1000
+            if self.player_death:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                self.display_surface.fill("black")
+                font = pygame.font.Font(PATHS["font"],50)
+                text_surf = font.render("DEFEAT", True, (255,255,255))
+                self.display_surface.blit(text_surf,(500,200))
+            else:
+                # event loop
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                dt = self.clock.tick() / 1000
 
-            # update groups
-            self.all_sprites.update(dt)
-            self.bullet_collision()
+        
+                # update groups
+                self.all_sprites.update(dt)
+                self.bullet_collision()
 
-            # draw groups
-            self.display_surface.fill("black")
-            self.all_sprites.custom_draw()
+                # draw groups
+                self.display_surface.fill("black")
+                self.all_sprites.custom_draw()
 
             pygame.display.update()
 
