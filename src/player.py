@@ -45,22 +45,17 @@ class Player(Entity):
                     case "up": self.bullet_dir = vector(0, -1)
                     case "down": self.bullet_dir = vector(0, 1)
 
-
     def import_assets(self, path):
-
         surf = pygame.image.load(path).convert_alpha()
 
-        for i in PLAYER_ANIMAIONS:
-            status = PLAYER_ANIMAIONS[i].split('.')[0]
-            frames = int(PLAYER_ANIMAIONS[i].split('.')[1])
+        for i in PLAYER_ANIMATIONS:
+            status = PLAYER_ANIMATIONS[i].split('.')[0]
+            frames = int(PLAYER_ANIMATIONS[i].split('.')[1])
             if status not in self.animations:
                 self.animations[status] = []
             for j in range(frames):
-                image = get_image(surf,j,round(float(i)),PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
+                image = get_image(surf, j, round(float(i)), PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
                 self.animations[status].append(image)
-                
-
-
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -107,7 +102,7 @@ class Player(Entity):
                     self.rect.centerx = self.hitbox.centerx
                     self.pos.x = self.hitbox.centerx
                 else:  # vertical
-                    if self.dir.y > 0:  # arriba
+                    if self.dir.y > 0:  # abajo
                         self.hitbox.bottom = sprite.hitbox.top
                     if self.dir.y < 0:  # arriba
                         self.hitbox.top = sprite.hitbox.bottom

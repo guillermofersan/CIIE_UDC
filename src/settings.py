@@ -1,14 +1,14 @@
-WINDOW_WIDTH, WINDOW_HEIGHT = 1280, 720
-PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH = 64,64
+WINDOW_WIDTH, WINDOW_HEIGHT = 800, 800
+PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH = 64, 64
 
 PATHS = {
-	"enemy": "../graphics/player",
-    "player": "../graphics/player/spritesPlayer.png",
-    "arrow": "../graphics/weapon/arrow2.png",
-    "font": "../graphics/other/subatomic.ttf"
+	"enemy": "graphics/player",
+    "player": "graphics/player/spritesPlayer.png",
+    "arrow": "graphics/weapon/arrow2.png",
+    "font": "graphics/other/subatomic.ttf"
 }
 
-PLAYER_ANIMAIONS = {
+PLAYER_ANIMATIONS = {
     "10":"down.9",
     "6":"down_attack.8",
     "10.2":"down_idle.1",

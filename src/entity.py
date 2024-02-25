@@ -22,7 +22,7 @@ class Entity(pygame.sprite.Sprite):
         self.speed = 100
 
         # colisiones
-        self.hitbox = self.rect.inflate(-self.rect.width * 0.5, -self.rect.height/4)
+        self.hitbox = self.rect.inflate(-self.rect.width * 0.6, -self.rect.height / 1.7)
         self.collision_sprites = collision_sprites
 
         # ataque
@@ -31,7 +31,6 @@ class Entity(pygame.sprite.Sprite):
         self.health = health
         self.is_vulnerable = True
         self.hit_time = None
-
 
     def blink(self):
         if not self.is_vulnerable:
@@ -58,8 +57,6 @@ class Entity(pygame.sprite.Sprite):
          if self.health <= 0:
              self.kill()
 
-
-
     def get_status(self):
         # idle
         if self.dir.x == 0 and self.dir.y == 0 and self.status != "death":
@@ -69,11 +66,7 @@ class Entity(pygame.sprite.Sprite):
         if self.is_attacking and self.status != "death":
             self.status = self.status.split("_")[0] + "_attack"
 
-
-
     def move(self, dt):
-
-        
         # normalizar
         if self.dir.magnitude() != 0:
             self.dir = self.dir.normalize()
@@ -89,6 +82,3 @@ class Entity(pygame.sprite.Sprite):
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
         self.collision("vertical")
-
-
-    

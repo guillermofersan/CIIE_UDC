@@ -16,7 +16,7 @@ class AllSprites(pygame.sprite.Group):
         self.display_surface = pygame.display.get_surface()
 
         # Cálculo del factor de escala basado en el tamaño de la ventana y el tamaño del fondo
-        self.bg_size = 16  # Cuadrado 16x16
+        self.bg_size = 50  # Cuadrado 16x16
         self.tile_size = 16  # El tamaño original de cada tile (16x16)
         self.zoom_scale = WINDOW_HEIGHT / (self.bg_size * self.tile_size)
 
@@ -27,13 +27,11 @@ class AllSprites(pygame.sprite.Group):
         self.internal_surf = pygame.Surface(self.internal_surf_size, pygame.SRCALPHA)
         self.internal_rect = self.internal_surf.get_rect(topleft=(0, 0))
         self.internal_surf_size_vector = pygame.math.Vector2(self.internal_surf_size)
-        self.internal_offset = pygame.math.Vector2(self.internal_surf_size[0] // 2 - 8 * self.tile_size,
-                                                   self.internal_surf_size[1] // 2 - 8 * self.tile_size)
+        self.internal_offset = pygame.math.Vector2(self.internal_surf_size[0] // 2 - 25 * self.tile_size,
+                                                   self.internal_surf_size[1] // 2 - 25 * self.tile_size)
 
-        self.bg_surf = pygame.image.load('../graphics/other/bg.png').convert_alpha()
+        self.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
-
-
 
     def custom_draw(self):
         self.internal_surf.fill("black")
@@ -51,7 +49,6 @@ class AllSprites(pygame.sprite.Group):
 
         self.display_surface.blit(scaled_surf, scaled_rect)
 
-
 class Main:
     def __init__(self):
         pygame.init()
@@ -61,8 +58,8 @@ class Main:
         arrow_surf = pygame.image.load(PATHS["arrow"]).convert_alpha()
         self.arrow = []
         for i in range(4):
-            self.arrow.append(get_image(arrow_surf,i,0,32, 32, 1, (0,0,0)))
-        self.bullet_surf = pygame.image.load("../graphics/weapon/bullet.png").convert_alpha()
+            self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0)))
+        self.bullet_surf = pygame.image.load("graphics/weapon/bullet.png").convert_alpha()
 
         # groups
         self.all_sprites = AllSprites()
@@ -105,10 +102,16 @@ class Main:
             self.player.damage(1)
 
     def setup(self):
-        tmx_map = load_pygame("../data/map..tmx")
+        tmx_map = load_pygame("data/tumba.tmx")
 
-        for x, y, surf in tmx_map.get_layer_by_name("walls").tiles():
+        for x, y, surf in tmx_map.get_layer_by_name("intermedio").tiles():
+            Sprite((x * 16, y * 16), surf, self.all_sprites)
+
+        for x, y, surf in tmx_map.get_layer_by_name("objetos").tiles():
             Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+
+        for x, y, surf in tmx_map.get_layer_by_name("runas").tiles():
+            Sprite((x * 16, y * 16), surf, self.all_sprites)
 
         for obj in tmx_map.get_layer_by_name("player"):
             if obj.name == "Player":
@@ -121,6 +124,7 @@ class Main:
                     health = 10,
                     death = self.death
                 )
+
         for obj in tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy":
                 self.monster = Monster(
@@ -133,7 +137,6 @@ class Main:
                     player=self.player,
                     shot_speed=500
                 )
-
 
     def run(self):
         while True:
@@ -152,8 +155,8 @@ class Main:
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
-                dt = self.clock.tick() / 1000
 
+                dt = self.clock.tick() / 1000
         
                 # update groups
                 self.all_sprites.update(dt)
@@ -164,7 +167,6 @@ class Main:
                 self.all_sprites.custom_draw()
 
             pygame.display.update()
-
 
 if __name__ == "__main__":
     main = Main()
