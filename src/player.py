@@ -93,9 +93,9 @@ class Player(Entity):
         self.image = current_animation[int(self.frame_index)]
 
     def collision(self, dir):
-        if WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH and WINDOW_HEIGHT / 2 - 80 < self.pos.y < WINDOW_HEIGHT / 2 + 80:
+        if WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15:
             self.start_scroll()
-            self.pos.x += 150
+            self.pos.x += 180
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":

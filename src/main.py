@@ -108,6 +108,26 @@ class Main:
     def start_scroll(self):
         self.scroll = True
 
+    def setup_zona2(self):
+        tmx_map = load_pygame("data/tumba.tmx")
+        for obj in tmx_map.get_layer_by_name("enemy"):
+            if obj.name == "Enemy" and WINDOW_WIDTH < obj.x < WINDOW_WIDTH * 2:
+                self.monster = Monster(
+                    pos=(obj.x, obj.y),
+                    groups=[self.all_sprites, self.enemy],
+                    path=PATHS["enemy"],
+                    collision_sprites=self.colliders,
+                    create_bullet=self.create_bullet,
+                    health = 5,
+                    player=self.player,
+                    shot_speed=500
+                )
+                w = self.monster.image.get_size()[0]
+                h = self.monster.image.get_size()[1]
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
+                self.monster.attach(healthBar)
+                self.monster.healthBar = healthBar
+
     def setup(self):
         tmx_map = load_pygame("data/tumba.tmx")
 
@@ -137,7 +157,7 @@ class Main:
                 
 
         for obj in tmx_map.get_layer_by_name("enemy"):
-            if obj.name == "Enemy":
+            if obj.name == "Enemy" and obj.x < WINDOW_WIDTH:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
@@ -179,17 +199,11 @@ class Main:
                         sys.exit()
                     
                 if self.scroll:
-                    self.all_sprites.internal_offset.x -= 10
+                    self.all_sprites.internal_offset.x -= 100
                     self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
                     if self.all_sprites.internal_offset.x % 800 == 0:
                         self.scroll = False
-                # keys = pygame.key.get_pressed()
-                # if keys[pygame.K_x] and self.all_sprites.half_w < self.display_surface.get_size()[0] // 2:
-                #     self.all_sprites.internal_offset.x += 10
-                #     self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
-                # if keys[pygame.K_z]:
-                #     self.all_sprites.internal_offset.x -= 10
-                #     self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
+                        self.setup_zona2()
 
                 dt = self.clock.tick() / 1000
         
