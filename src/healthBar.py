@@ -24,8 +24,8 @@ class HealthBar(Observer, pygame.sprite.Sprite):
         pygame.draw.rect(surface, "green", (self.x, self.y, self.w * ratio, self.h))
 
     def move(self, x, y):
-        self.x += x
-        self.y += y
+        self.x = x
+        self.y = y
     
 
     def update(self, subject: Subject) -> None:

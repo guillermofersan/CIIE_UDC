@@ -129,10 +129,6 @@ class Monster(Entity,Enemy):
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
 
-    def move(self, dt):
-        super().move(dt)
-        self.healthBar.move(self.dir.x * self.speed * dt, self.dir.y * self.speed * dt)
-
     def vulnerability_timer(self):
         if not self.is_vulnerable:
             current_time = pygame.time.get_ticks()
@@ -150,6 +146,7 @@ class Monster(Entity,Enemy):
             self.move(dt)
             self.animate(dt)
             self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
 
             self.vulnerability_timer()
             self.check_death()
