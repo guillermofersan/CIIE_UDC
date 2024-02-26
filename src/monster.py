@@ -125,14 +125,15 @@ class Monster(Entity,Enemy):
 
     def update(self, dt):
 
-        self.face_player()
-        self.walk_to_player()
-        self.attack()
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
 
-        
-        self.move(dt)
-        self.animate(dt)
-        self.blink()
+            
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
 
-        self.vulnerability_timer()
-        self.check_death()
+            self.vulnerability_timer()
+            self.check_death()

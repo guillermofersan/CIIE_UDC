@@ -4,14 +4,29 @@ from entity import Entity
 from os import walk
 from settings import *
 from utilities import *
+from observer import Observer, Subject
 
-class Player(Entity):
+class Player(Entity, Subject):
+
+    observers = []
+
     def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll):
         super().__init__(pos, groups, path, collision_sprites, health)
         self.death = death
         self.is_shooting = False
         self.create_bullet = create_bullet
         self.start_scroll = start_scroll
+
+
+    def attach(self, observer: Observer) -> None:
+        self.observers.append(observer)
+
+    def detach(self, observer: Observer) -> None:
+        self.observers.remove(observer)
+
+    def notify(self) -> None:
+        for ob in self.observers:
+            ob.update(self)
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -66,27 +81,25 @@ class Player(Entity):
             self.frame_index += 14 * dt
 
         if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
-            bullet_offset = self.rect.center
+            bullet_offset = self.rect.center + self.bullet_dir*35
             match self.status.split("_")[0]:
                     case "left":
-                        bullet_offset += self.bullet_dir*35
-                        bullet_offset[1] = bullet_offset[1]+round(bullet_offset[1]/10)
+                        bullet_offset[1] = bullet_offset[1]+10
                     case "right":
-                        bullet_offset += self.bullet_dir*35
-                        bullet_offset[1] = bullet_offset[1]+round(bullet_offset[1]/10)
+                        bullet_offset[1] = bullet_offset[1]+10
                     case "up":
-                        bullet_offset += self.bullet_dir*30
-                        bullet_offset[0] = bullet_offset[0]+round(bullet_offset[0]/17)
+                        bullet_offset[0] = bullet_offset[0]+5
                     case "down":
-                        bullet_offset += self.bullet_dir*45
-                        bullet_offset[0] = bullet_offset[0]-round(bullet_offset[0]/17)
+                        bullet_offset[0] = bullet_offset[0]-5
+                        bullet_offset[1] = bullet_offset[1]+5
             self.create_bullet(bullet_offset, self.bullet_dir)
             self.is_shooting = True
 
         if self.frame_index >= len(current_animation):
+            self.frame_index = 0
             if self.status == "death":
                 self.death()
-            self.frame_index = 0
+                self.frame_index = len(current_animation)-1
             if self.is_attacking:
                 self.is_attacking = False
 
@@ -124,6 +137,7 @@ class Player(Entity):
             self.status = 'death'
 
     def update(self, dt):
+        
         self.input()
         self.get_status()
         self.move(dt)

@@ -125,7 +125,7 @@ class Main:
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_arrow,
-                    health = 10,
+                    health = 1,
                     death = self.death,
                     start_scroll = self.start_scroll
                 )
@@ -144,16 +144,22 @@ class Main:
                 )
 
     def run(self):
+        one = True
         while True:
             if self.player_death:
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
-                self.display_surface.fill("black")
-                font = pygame.font.Font(PATHS["font"],50)
-                text_surf = font.render("DEFEAT", True, (255,255,255))
-                self.display_surface.blit(text_surf,(500,200))
+                if one:
+                    fill_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
+                    fill_color = (0, 0, 0, 120)
+                    fill_surface.fill(fill_color)
+                    self.display_surface.blit(fill_surface, (0,0))
+                    font = pygame.font.Font(PATHS["font"],50)
+                    text_surf = font.render("DEFEAT", True, (255,255,255))
+                    self.display_surface.blit(text_surf,(int(WINDOW_WIDTH/2)-100,int(WINDOW_HEIGHT/2)-20))
+                    one = False
             else:
                 # event loop
                 for event in pygame.event.get():
