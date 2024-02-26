@@ -6,11 +6,12 @@ from settings import *
 from utilities import *
 
 class Player(Entity):
-    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death):
+    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll):
         super().__init__(pos, groups, path, collision_sprites, health)
         self.death = death
         self.is_shooting = False
         self.create_bullet = create_bullet
+        self.start_scroll = start_scroll
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -92,6 +93,9 @@ class Player(Entity):
         self.image = current_animation[int(self.frame_index)]
 
     def collision(self, dir):
+        if WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH and WINDOW_HEIGHT / 2 - 80 < self.pos.y < WINDOW_HEIGHT / 2 + 80:
+            self.start_scroll()
+            self.pos.x += 150
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":

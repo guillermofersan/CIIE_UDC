@@ -68,6 +68,7 @@ class Main:
         self.enemy = pygame.sprite.Group()
 
         self.player_death = False
+        self.scroll = False
 
         self.setup()
 
@@ -101,6 +102,9 @@ class Main:
         if pygame.sprite.spritecollide(self.player, self.bullets, True, pygame.sprite.collide_mask):
             self.player.damage(1)
 
+    def start_scroll(self):
+        self.scroll = True
+
     def setup(self):
         tmx_map = load_pygame("data/tumba.tmx")
 
@@ -122,7 +126,8 @@ class Main:
                     collision_sprites=self.colliders,
                     create_bullet=self.create_arrow,
                     health = 10,
-                    death = self.death
+                    death = self.death,
+                    start_scroll = self.start_scroll
                 )
 
         for obj in tmx_map.get_layer_by_name("enemy"):
@@ -155,6 +160,19 @@ class Main:
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
+                    
+                if self.scroll:
+                    self.all_sprites.internal_offset.x -= 10
+                    self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
+                    if self.all_sprites.internal_offset.x % 800 == 0:
+                        self.scroll = False
+                # keys = pygame.key.get_pressed()
+                # if keys[pygame.K_x] and self.all_sprites.half_w < self.display_surface.get_size()[0] // 2:
+                #     self.all_sprites.internal_offset.x += 10
+                #     self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
+                # if keys[pygame.K_z]:
+                #     self.all_sprites.internal_offset.x -= 10
+                #     self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
 
                 dt = self.clock.tick() / 1000
         
