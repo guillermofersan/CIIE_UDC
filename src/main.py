@@ -9,6 +9,8 @@ from settings import *
 from sprite import Bullet
 from sprite import Sprite
 from utilities import *
+from healthBar import HealthBar
+
 
 class AllSprites(pygame.sprite.Group):
     def __init__(self):
@@ -66,6 +68,7 @@ class Main:
         self.colliders = pygame.sprite.Group()
         self.bullets = pygame.sprite.Group()
         self.enemy = pygame.sprite.Group()
+        self.healthBar = pygame.sprite.Group()
 
         self.player_death = False
         self.scroll = False
@@ -125,10 +128,13 @@ class Main:
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_arrow,
-                    health = 1,
+                    health = 5,
                     death = self.death,
                     start_scroll = self.start_scroll
                 )
+                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 5, self.healthBar)
+                self.player.attach(healthBar)
+                
 
         for obj in tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy":
@@ -142,6 +148,11 @@ class Main:
                     player=self.player,
                     shot_speed=500
                 )
+                w = self.monster.image.get_size()[0]
+                h = self.monster.image.get_size()[1]
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
+                self.monster.attach(healthBar)
+                self.monster.healthBar = healthBar
 
     def run(self):
         one = True
@@ -186,9 +197,13 @@ class Main:
                 self.all_sprites.update(dt)
                 self.bullet_collision()
 
+
                 # draw groups
                 self.display_surface.fill("black")
                 self.all_sprites.custom_draw()
+
+                for a in self.healthBar:
+                    a.draw(self.display_surface)
 
             pygame.display.update()
 

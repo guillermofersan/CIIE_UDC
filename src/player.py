@@ -4,11 +4,8 @@ from entity import Entity
 from os import walk
 from settings import *
 from utilities import *
-from observer import Observer, Subject
 
-class Player(Entity, Subject):
-
-    observers = []
+class Player(Entity):
 
     def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll):
         super().__init__(pos, groups, path, collision_sprites, health)
@@ -17,16 +14,6 @@ class Player(Entity, Subject):
         self.create_bullet = create_bullet
         self.start_scroll = start_scroll
 
-
-    def attach(self, observer: Observer) -> None:
-        self.observers.append(observer)
-
-    def detach(self, observer: Observer) -> None:
-        self.observers.remove(observer)
-
-    def notify(self) -> None:
-        for ob in self.observers:
-            ob.update(self)
 
     def input(self):
         keys = pygame.key.get_pressed()

@@ -2,6 +2,7 @@ import pygame
 from pygame.math import Vector2 as vector
 from entity import Entity
 from os import walk
+from healthBar import HealthBar
 
 class Enemy:
     def get_player_distance_direction(self):
@@ -52,9 +53,14 @@ class Monster(Entity,Enemy):
         self.shot_speed = shot_speed
         self.shoot_time = 0
 
+        self.healthBar = None
+
 
         self.create_bullet = create_bullet
         self.is_shooting = False
+
+    def giveHealthBar(self, healthBar: HealthBar):
+        self.healthBar = healthBar
 
     def attack(self):
         distance = self.get_player_distance_direction()[0]
@@ -86,6 +92,12 @@ class Monster(Entity,Enemy):
 
         self.image = current_animation[int(self.frame_index)]
 
+
+    def check_death(self):
+        super().check_death()
+        if self.health <= 0:
+                self.healthBar.kill()
+
     def import_assets(self, path):
 
         for index, folder in enumerate(walk(path)):
@@ -116,6 +128,10 @@ class Monster(Entity,Enemy):
                         self.hitbox.top = sprite.hitbox.bottom
                     self.rect.centery = self.hitbox.centery
                     self.pos.y = self.hitbox.centery
+
+    def move(self, dt):
+        super().move(dt)
+        self.healthBar.move(self.dir.x * self.speed * dt, self.dir.y * self.speed * dt)
 
     def vulnerability_timer(self):
         if not self.is_vulnerable:

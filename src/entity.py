@@ -2,11 +2,15 @@ import pygame
 from pygame.math import Vector2 as vector
 from os import walk
 from math import sin
+from observer import Observer, Subject
+
+class Entity(pygame.sprite.Sprite, Subject):
 
 
-class Entity(pygame.sprite.Sprite):
     def __init__(self, pos, groups, path, collision_sprites, health):
         super().__init__(groups)
+
+        self.observers = []
 
         self.animations = {}
         self.import_assets(path)
@@ -32,6 +36,16 @@ class Entity(pygame.sprite.Sprite):
         self.is_vulnerable = True
         self.hit_time = None
 
+    def attach(self, observer: Observer) -> None:
+        self.observers.append(observer)
+
+    def detach(self, observer: Observer) -> None:
+        self.observers.remove(observer)
+
+    def notify(self) -> None:
+        for ob in self.observers:
+            ob.update(self)
+
     def blink(self):
         if not self.is_vulnerable:
              if self.wave_value():
@@ -52,6 +66,7 @@ class Entity(pygame.sprite.Sprite):
             self.health -= ammount
             self.is_vulnerable = False
             self.hit_time = pygame.time.get_ticks()
+            self.notify()
     
     def check_death(self):
          if self.health <= 0:
@@ -82,3 +97,4 @@ class Entity(pygame.sprite.Sprite):
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
         self.collision("vertical")
+
