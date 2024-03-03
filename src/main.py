@@ -62,6 +62,8 @@ class Main:
         for i in range(4):
             self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0)))
         self.bullet_surf = pygame.image.load("graphics/weapon/bullet.png").convert_alpha()
+        self.tmx_map = load_pygame("data/tumba.tmx")
+        self.zona_actual = 1
 
         # groups
         self.all_sprites = AllSprites()
@@ -109,8 +111,8 @@ class Main:
         self.scroll = True
 
     def setup_zona2(self):
-        tmx_map = load_pygame("data/tumba.tmx")
-        for obj in tmx_map.get_layer_by_name("enemy"):
+        self.zona_actual = 2
+        for obj in self.tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy" and WINDOW_WIDTH < obj.x < WINDOW_WIDTH * 2:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
@@ -128,19 +130,54 @@ class Main:
                 self.monster.attach(healthBar)
                 self.monster.healthBar = healthBar
 
-    def setup(self):
-        tmx_map = load_pygame("data/tumba.tmx")
+    def setup_zona3(self):
+        self.zona_actual = 3
+        for obj in self.tmx_map.get_layer_by_name("enemy"):
+            if obj.name == "Enemy" and WINDOW_WIDTH * 2 < obj.x < WINDOW_WIDTH * 4:
+                self.monster = Monster(
+                    pos=(obj.x, obj.y),
+                    groups=[self.all_sprites, self.enemy],
+                    path=PATHS["enemy"],
+                    collision_sprites=self.colliders,
+                    create_bullet=self.create_bullet,
+                    health = 5,
+                    player=self.player,
+                    shot_speed=500
+                )
+                w = self.monster.image.get_size()[0]
+                h = self.monster.image.get_size()[1]
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
+                self.monster.attach(healthBar)
+                self.monster.healthBar = healthBar
 
-        for x, y, surf in tmx_map.get_layer_by_name("intermedio").tiles():
+            if obj.name == "Boss":
+                self.monster = Monster(
+                    pos=(obj.x, obj.y),
+                    groups=[self.all_sprites, self.enemy],
+                    path=PATHS["enemy"],
+                    collision_sprites=self.colliders,
+                    create_bullet=self.create_bullet,
+                    health = 20,
+                    player=self.player,
+                    shot_speed=500
+                )
+                w = self.monster.image.get_size()[0]
+                h = self.monster.image.get_size()[1]
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 20, self.healthBar)
+                self.monster.attach(healthBar)
+                self.monster.healthBar = healthBar
+
+    def setup(self):
+        for x, y, surf in self.tmx_map.get_layer_by_name("intermedio").tiles():
             Sprite((x * 16, y * 16), surf, self.all_sprites)
 
-        for x, y, surf in tmx_map.get_layer_by_name("objetos").tiles():
+        for x, y, surf in self.tmx_map.get_layer_by_name("objetos").tiles():
             Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
 
-        for x, y, surf in tmx_map.get_layer_by_name("runas").tiles():
+        for x, y, surf in self.tmx_map.get_layer_by_name("runas").tiles():
             Sprite((x * 16, y * 16), surf, self.all_sprites)
 
-        for obj in tmx_map.get_layer_by_name("player"):
+        for obj in self.tmx_map.get_layer_by_name("player"):
             if obj.name == "Player":
                 self.player = Player(
                     pos=(obj.x, obj.y),
@@ -148,15 +185,15 @@ class Main:
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_arrow,
-                    health = 5,
+                    health = 10,
                     death = self.death,
                     start_scroll = self.start_scroll
                 )
-                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 5, self.healthBar)
+                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
+                self.player.healthBar = healthBar
                 
-
-        for obj in tmx_map.get_layer_by_name("enemy"):
+        for obj in self.tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy" and obj.x < WINDOW_WIDTH:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
@@ -200,10 +237,9 @@ class Main:
                     
                 if self.scroll:
                     self.all_sprites.internal_offset.x -= 100
-                    self.all_sprites.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
                     if self.all_sprites.internal_offset.x % 800 == 0:
                         self.scroll = False
-                        self.setup_zona2()
+                        self.setup_zona2() if self.zona_actual == 1 else self.setup_zona3()
 
                 dt = self.clock.tick() / 1000
         
@@ -216,8 +252,8 @@ class Main:
                 self.display_surface.fill("black")
                 self.all_sprites.custom_draw()
 
-                for a in self.healthBar:
-                    a.draw(self.display_surface)
+                for bar in self.healthBar:
+                    bar.draw(self.display_surface, self.all_sprites.internal_offset.x)
 
             pygame.display.update()
 

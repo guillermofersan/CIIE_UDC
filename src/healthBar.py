@@ -18,15 +18,15 @@ class HealthBar(Observer, pygame.sprite.Sprite):
         self.image = surf
         self.rect = self.image.get_rect(center=(x,y))
     
-    def draw(self, surface):
+    def draw(self, surface, offset):
         ratio = self.hp / self.maxHp
-        pygame.draw.rect(surface, "red", (self.x, self.y, self.w, self.h))
-        pygame.draw.rect(surface, "green", (self.x, self.y, self.w * ratio, self.h))
+        x = self.x + offset
+        pygame.draw.rect(surface, "red", (x, self.y, self.w, self.h))
+        pygame.draw.rect(surface, "green", (x, self.y, self.w * ratio, self.h))
 
     def move(self, x, y):
         self.x = x
         self.y = y
-    
 
     def update(self, subject: Subject) -> None:
         self.hp = subject.health

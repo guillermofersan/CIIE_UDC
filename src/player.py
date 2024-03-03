@@ -13,7 +13,7 @@ class Player(Entity):
         self.is_shooting = False
         self.create_bullet = create_bullet
         self.start_scroll = start_scroll
-
+        self.healthBar = None
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -93,9 +93,12 @@ class Player(Entity):
         self.image = current_animation[int(self.frame_index)]
 
     def collision(self, dir):
-        if WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15:
+        if ((WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH
+             or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2)
+            and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
             self.start_scroll()
             self.pos.x += 180
+            self.healthBar.x += WINDOW_WIDTH
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":
