@@ -5,7 +5,10 @@ PATHS = {
 	"enemy": "graphics/player",
     "player": "graphics/player/spritesPlayer.png",
     "arrow": "graphics/weapon/arrow2.png",
-    "font": "graphics/other/subatomic.ttf"
+    "font": "graphics/other/subatomic.ttf",
+    "background": "graphics/other/tumba.png",
+    "bullet": "graphics/weapon/bullet.png",
+    "map": "data/tumba.tmx"
 }
 
 PLAYER_ANIMATIONS = {

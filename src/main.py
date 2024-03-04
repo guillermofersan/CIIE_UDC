@@ -10,7 +10,7 @@ from sprite import Bullet
 from sprite import Sprite
 from utilities import *
 from healthBar import HealthBar
-
+from recursos import *
 
 class AllSprites(pygame.sprite.Group):
     def __init__(self):
@@ -18,35 +18,30 @@ class AllSprites(pygame.sprite.Group):
         self.display_surface = pygame.display.get_surface()
 
         # Cálculo del factor de escala basado en el tamaño de la ventana y el tamaño del fondo
-        self.bg_size = 50  # Cuadrado 16x16
+        self.bg_size = 50  # 50x50 tiles cada pantalla
         self.tile_size = 16  # El tamaño original de cada tile (16x16)
         self.zoom_scale = WINDOW_HEIGHT / (self.bg_size * self.tile_size)
 
         # Ajustes para la cámara y el zoom
-        self.offset = pygame.math.Vector2()
         self.half_w, self.half_h = self.display_surface.get_size()[0] // 2, WINDOW_HEIGHT // 2
-        self.internal_surf_size = (self.bg_size * self.tile_size, self.bg_size * self.tile_size)
+        self.internal_surf_size = pygame.math.Vector2(self.bg_size * self.tile_size, self.bg_size * self.tile_size)
         self.internal_surf = pygame.Surface(self.internal_surf_size, pygame.SRCALPHA)
-        self.internal_rect = self.internal_surf.get_rect(topleft=(0, 0))
-        self.internal_surf_size_vector = pygame.math.Vector2(self.internal_surf_size)
-        self.internal_offset = pygame.math.Vector2(self.internal_surf_size[0] // 2 - 25 * self.tile_size,
-                                                   self.internal_surf_size[1] // 2 - 25 * self.tile_size)
-
-        self.bg_surf = pygame.image.load('graphics/other/tumba.png').convert_alpha()
+        self.internal_offset = pygame.math.Vector2(0,0)
+        self.bg_surf = GestorRecursos.load('background')
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
 
     def custom_draw(self):
         self.internal_surf.fill("black")
 
-        bg_offset = self.bg_rect.topleft - self.offset + self.internal_offset
+        bg_offset = self.bg_rect.topleft + self.internal_offset
         self.internal_surf.blit(self.bg_surf, bg_offset)
 
         # active elements
         for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
-            offset_pos = sprite.rect.topleft - self.offset + self.internal_offset
+            offset_pos = sprite.rect.topleft + self.internal_offset
             self.internal_surf.blit(sprite.image, offset_pos)
 
-        scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surf_size_vector * self.zoom_scale)
+        scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surf_size * self.zoom_scale)
         scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
 
         self.display_surface.blit(scaled_surf, scaled_rect)
@@ -57,12 +52,12 @@ class Main:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("demo")
         self.clock = pygame.time.Clock()
-        arrow_surf = pygame.image.load(PATHS["arrow"]).convert_alpha()
+        arrow_surf = GestorRecursos.load('arrow')
         self.arrow = []
         for i in range(4):
             self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0)))
-        self.bullet_surf = pygame.image.load("graphics/weapon/bullet.png").convert_alpha()
-        self.tmx_map = load_pygame("data/tumba.tmx")
+        self.bullet_surf = GestorRecursos.load('bullet')
+        self.tmx_map = GestorRecursos.load('map', type='map')
         self.zona_actual = 1
 
         # groups
@@ -92,7 +87,6 @@ class Main:
         self.player_death = True
 
     def bullet_collision(self):
-
         for wall in self.colliders:
             pygame.sprite.spritecollide(wall, self.bullets, True,  pygame.sprite.collide_mask)
 
@@ -224,7 +218,7 @@ class Main:
                     fill_color = (0, 0, 0, 120)
                     fill_surface.fill(fill_color)
                     self.display_surface.blit(fill_surface, (0,0))
-                    font = pygame.font.Font(PATHS["font"],50)
+                    font = GestorRecursos.load('font', type='font')
                     text_surf = font.render("DEFEAT", True, (255,255,255))
                     self.display_surface.blit(text_surf,(int(WINDOW_WIDTH/2)-100,int(WINDOW_HEIGHT/2)-20))
                     one = False
@@ -246,7 +240,6 @@ class Main:
                 # update groups
                 self.all_sprites.update(dt)
                 self.bullet_collision()
-
 
                 # draw groups
                 self.display_surface.fill("black")
