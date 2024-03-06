@@ -3,17 +3,19 @@ from pygame.math import Vector2 as vector
 from os import walk
 from math import sin
 from observer import Observer, Subject
+from settings import *
+from utilities import *
 
 class Entity(pygame.sprite.Sprite, Subject):
 
 
-    def __init__(self, pos, groups, path, collision_sprites, health):
+    def __init__(self, pos, groups, path, collision_sprites, health, animations):
         super().__init__(groups)
 
         self.observers = []
 
         self.animations = {}
-        self.import_assets(path)
+        self.import_assets(path, animations)
         self.frame_index = 0
         self.status = "down_idle"
 
@@ -35,6 +37,30 @@ class Entity(pygame.sprite.Sprite, Subject):
         self.health = health
         self.is_vulnerable = True
         self.hit_time = None
+
+
+
+    def import_assets(self, path, animations):
+        surf = pygame.image.load(path).convert_alpha()
+
+        for i in animations:
+            status = animations[i].split('.')[0]
+            frames = int(animations[i].split('.')[1])
+            space = 0
+            if len(animations[i].split('.')) > 2:
+                space = int(animations[i].split('.')[2])
+            if status not in self.animations:
+                self.animations[status] = []
+            for j in range(frames):
+                j2 = j
+                if space!=0:
+                    j2 = 1+(space*j)
+                    if j == 0:
+                        j2 = 1
+            
+                image = get_image(surf, j2, round(float(i)), PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
+                self.animations[status].append(image)
+
 
     def attach(self, observer: Observer) -> None:
         self.observers.append(observer)

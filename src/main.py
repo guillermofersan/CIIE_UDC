@@ -111,12 +111,13 @@ class Main:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["enemy"],
+                    path=PATHS["esqueletoSword"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_bullet,
                     health = 5,
                     player=self.player,
-                    shot_speed=500
+                    shot_speed=500,
+                    animations=SWORD_ANIMATIONS
                 )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
@@ -131,12 +132,13 @@ class Main:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["enemy"],
+                    path=PATHS["esqueletoSword"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_bullet,
                     health = 5,
                     player=self.player,
-                    shot_speed=500
+                    shot_speed=500,
+                    animations=SWORD_ANIMATIONS
                 )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
@@ -148,12 +150,13 @@ class Main:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["enemy"],
+                    path=PATHS["esqueletoSword"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_bullet,
                     health = 20,
                     player=self.player,
-                    shot_speed=500
+                    shot_speed=500,
+                    animations=SWORD_ANIMATIONS
                 )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
@@ -181,7 +184,8 @@ class Main:
                     create_bullet=self.create_arrow,
                     health = 10,
                     death = self.death,
-                    start_scroll = self.start_scroll
+                    start_scroll = self.start_scroll,
+                    animations=CROSSBOW_ANIMATIONS
                 )
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
@@ -192,12 +196,13 @@ class Main:
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["enemy"],
+                    path=PATHS["esqueletoSword"],
                     collision_sprites=self.colliders,
                     create_bullet=self.create_bullet,
                     health = 5,
                     player=self.player,
-                    shot_speed=500
+                    shot_speed=500,
+                    animations=SWORD_ANIMATIONS
                 )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]

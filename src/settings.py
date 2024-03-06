@@ -8,10 +8,28 @@ PATHS = {
     "font": "graphics/other/subatomic.ttf",
     "background": "graphics/other/tumba.png",
     "bullet": "graphics/weapon/bullet.png",
-    "map": "data/tumba.tmx"
+    "map": "data/tumba.tmx",
+    "esqueleto": "graphics/esqueleto/nothing.png",
+    "esqueletoSword": "graphics/esqueleto/sword.png"
 }
 
-PLAYER_ANIMATIONS = {
+SWORD_ANIMATIONS = {
+    "10":"down.9",
+    "28":"down_attack.6.3",
+    "10.2":"down_idle.1",
+    "9":"left.9",
+    "25":"left_attack.6.3",
+    "9.2":"left_idle.1",
+    "8":"up.9",
+    "22":"up_attack.6.3",
+    "8.2":"up_idle.1",
+    "11":"right.9",
+    "31":"right_attack.6.3",
+    "11.2":"right_idle.1",
+    "20":"death.6",
+}
+
+CROSSBOW_ANIMATIONS = {
     "10":"down.9",
     "6":"down_attack.8",
     "10.2":"down_idle.1",

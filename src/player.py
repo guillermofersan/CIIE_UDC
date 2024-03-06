@@ -3,12 +3,11 @@ from pygame.math import Vector2 as vector
 from entity import Entity
 from os import walk
 from settings import *
-from utilities import *
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll):
-        super().__init__(pos, groups, path, collision_sprites, health)
+    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, animations)
         self.death = death
         self.is_shooting = False
         self.create_bullet = create_bullet
@@ -48,17 +47,6 @@ class Player(Entity):
                     case "up": self.bullet_dir = vector(0, -1)
                     case "down": self.bullet_dir = vector(0, 1)
 
-    def import_assets(self, path):
-        surf = pygame.image.load(path).convert_alpha()
-
-        for i in PLAYER_ANIMATIONS:
-            status = PLAYER_ANIMATIONS[i].split('.')[0]
-            frames = int(PLAYER_ANIMATIONS[i].split('.')[1])
-            if status not in self.animations:
-                self.animations[status] = []
-            for j in range(frames):
-                image = get_image(surf, j, round(float(i)), PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
-                self.animations[status].append(image)
 
     def animate(self, dt):
         current_animation = self.animations[self.status]

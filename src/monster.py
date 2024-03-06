@@ -44,8 +44,8 @@ class Enemy:
 
 
 class Monster(Entity,Enemy):
-    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed):
-        super().__init__(pos, groups, path, collision_sprites, health)
+    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, animations)
 
         self.player = player
         self.attack_radius = 50
@@ -98,18 +98,7 @@ class Monster(Entity,Enemy):
         if self.health <= 0:
                 self.healthBar.kill()
 
-    def import_assets(self, path):
 
-        for index, folder in enumerate(walk(path)):
-            if index == 0:
-                for name in folder[1]:
-                    self.animations[name] = []
-            else:
-                for file_name in sorted(folder[2], key=lambda string: int(string.split('.')[0])):
-                    path = folder[0].replace("\\", "/") + "/" + file_name
-                    surf = pygame.image.load(path).convert_alpha()
-                    key = folder[0].split("\\")[1]
-                    self.animations[key].append(surf)
 
     def collision(self, dir):
         for sprite in self.collision_sprites.sprites():
