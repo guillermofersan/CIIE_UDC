@@ -5,6 +5,8 @@ from os import walk
 from healthBar import HealthBar
 
 class Enemy:
+
+
     def get_player_distance_direction(self):
         enemy_pos = vector(self.rect.center)
         player_pos = vector(self.player.rect.center)
@@ -40,70 +42,18 @@ class Enemy:
             self.dir = vector()
 
 
-
-
-
-class MonsterRange(Entity,Enemy):
-    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
+class Monster(Entity, Enemy):
+    def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
 
         self.player = player
-        self.attack_radius = 100
-        self.speed = 10
         self.shot_speed = shot_speed
         self.shoot_time = 0
 
         self.healthBar = None
 
-
-        self.create_bullet = create_bullet
         self.is_shooting = False
-
-    def giveHealthBar(self, healthBar: HealthBar):
-        self.healthBar = healthBar
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
-            self.is_attacking = True
-            self.frame_index = 0
-            self.is_shooting = False
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
-
-    def animate(self, dt):
-        current_animation = self.animations[self.status]
-
-        self.frame_index += 7 * dt
-
-        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 6:
-            direction = self.get_player_distance_direction()[1]
-            bullet_offset = self.rect.center + direction*35
-            match self.status.split("_")[0]:
-                    case "left":
-                        bullet_offset[1] = bullet_offset[1]+10
-                    case "right":
-                        bullet_offset[1] = bullet_offset[1]+10
-                    case "up":
-                        bullet_offset[0] = bullet_offset[0]+5
-                    case "down":
-                        bullet_offset[0] = bullet_offset[0]-5
-                        bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, direction, self.status)
-            self.shoot_time = pygame.time.get_ticks()
-            self.is_shooting = True
-
-        if self.frame_index >= len(current_animation):
-            self.frame_index = 0
-            if self.is_attacking:
-                self.is_attacking = False
-
-        self.image = current_animation[int(self.frame_index)]
-        self.mask = pygame.mask.from_surface(self.image)
-
-
+    
     def check_death(self):
         super().check_death()
         if self.health <= 0:
@@ -134,6 +84,129 @@ class MonsterRange(Entity,Enemy):
             current_time = pygame.time.get_ticks()
             if current_time - self.hit_time > 40:
                 self.is_vulnerable = True
+    
+    def giveHealthBar(self, healthBar: HealthBar):
+        self.healthBar = healthBar
+
+
+
+class MonsterCrossBow(Monster):
+    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+
+        self.attack_radius = 100
+        self.speed = 10
+
+        self.create_bullet = create_bullet
+
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_shooting = False
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
+
+        self.frame_index += 7 * dt
+
+        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 5:
+            direction = self.get_player_distance_direction()[1]
+            bullet_offset = self.rect.center + direction*40
+            match self.status.split("_")[0]:
+                    case "left":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "right":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "up":
+                        bullet_offset[0] = bullet_offset[0]+5
+                    case "down":
+                        bullet_offset[0] = bullet_offset[0]-5
+                        bullet_offset[1] = bullet_offset[1]+5
+            self.create_bullet(bullet_offset, direction, self.status)
+            self.shoot_time = pygame.time.get_ticks()
+            self.is_shooting = True
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+            if self.is_attacking:
+                self.is_attacking = False
+
+        self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+    def update(self, dt):
+
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
+
+            
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
+
+            self.vulnerability_timer()
+            self.check_death()
+
+class MonsterBow(Monster):
+    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+
+        self.attack_radius = 100
+        self.speed = 10
+
+        self.create_bullet = create_bullet
+
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_shooting = False
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
+
+        self.frame_index += 7 * dt
+
+        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 9:
+            direction = self.get_player_distance_direction()[1]
+            bullet_offset = self.rect.center + direction*35
+            match self.status.split("_")[0]:
+                    case "left":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "right":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "up":
+                        bullet_offset[0] = bullet_offset[0]+5
+                    case "down":
+                        bullet_offset[0] = bullet_offset[0]-5
+                        bullet_offset[1] = bullet_offset[1]+5
+            self.create_bullet(bullet_offset, direction, self.status)
+            self.shoot_time = pygame.time.get_ticks()
+            self.is_shooting = True
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+            if self.is_attacking:
+                self.is_attacking = False
+
+        self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
+
 
     def update(self, dt):
 
@@ -152,23 +225,81 @@ class MonsterRange(Entity,Enemy):
             self.check_death()
 
 
+class MonsterStaff(Monster):
+    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+
+        self.attack_radius = 100
+        self.speed = 10
+
+        self.create_bullet = create_bullet
+
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_shooting = False
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
 
 
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
 
-class MonsterCloseRange(Entity,Enemy):
+        self.frame_index += 7 * dt
+
+        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 6:
+            direction = self.get_player_distance_direction()[1]
+            bullet_offset = self.rect.center + direction*35
+            match self.status.split("_")[0]:
+                    case "left":
+                        bullet_offset[1] = bullet_offset[1]+10
+                        bullet_offset[0] = bullet_offset[0]-10
+                    case "right":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "up":
+                        bullet_offset[0] = bullet_offset[0]+5
+                    case "down":
+                        bullet_offset[0] = bullet_offset[0]-5
+                        bullet_offset[1] = bullet_offset[1]+5
+            self.create_bullet(bullet_offset, direction, self.status)
+            self.shoot_time = pygame.time.get_ticks()
+            self.is_shooting = True
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+            if self.is_attacking:
+                self.is_attacking = False
+
+        self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+    def update(self, dt):
+
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
+
+            
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
+
+            self.vulnerability_timer()
+            self.check_death()
+
+
+class MonsterSword(Monster):
     def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, animations)
+        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
 
-        self.player = player
         self.attack_radius = 50
         self.speed = 10
-        self.shot_speed = shot_speed
-        self.shoot_time = 0
-
-        self.healthBar = None
-
-    def giveHealthBar(self, healthBar: HealthBar):
-        self.healthBar = healthBar
 
     def attack(self):
         distance = self.get_player_distance_direction()[0]
@@ -197,37 +328,6 @@ class MonsterCloseRange(Entity,Enemy):
         self.image = current_animation[int(self.frame_index)]
         self.mask = pygame.mask.from_surface(self.image)
 
-
-    def check_death(self):
-        super().check_death()
-        if self.health <= 0:
-                self.healthBar.kill()
-
-
-
-    def collision(self, dir):
-        for sprite in self.collision_sprites.sprites():
-            if sprite.hitbox.colliderect(self.hitbox):
-                if dir == "horizontal":
-                    if self.dir.x > 0:  # derecha
-                        self.hitbox.right = sprite.hitbox.left
-                    if self.dir.x < 0:  # izquierda
-                        self.hitbox.left = sprite.hitbox.right
-                    self.rect.centerx = self.hitbox.centerx
-                    self.pos.x = self.hitbox.centerx
-                else:  # vertical
-                    if self.dir.y > 0:  # arriba
-                        self.hitbox.bottom = sprite.hitbox.top
-                    if self.dir.y < 0:  # arriba
-                        self.hitbox.top = sprite.hitbox.bottom
-                    self.rect.centery = self.hitbox.centery
-                    self.pos.y = self.hitbox.centery
-
-    def vulnerability_timer(self):
-        if not self.is_vulnerable:
-            current_time = pygame.time.get_ticks()
-            if current_time - self.hit_time > 40:
-                self.is_vulnerable = True
 
     def update(self, dt):
 

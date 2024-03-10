@@ -57,7 +57,7 @@ class Main:
         self.arrow = []
         for i in range(4):
             self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0)))
-        self.bullet_surf = GestorRecursos.load('bullet')
+        self.bullet_surf = GestorRecursos.load('fireball')
         self.tmx_map = GestorRecursos.load('map', type='map')
         self.zona_actual = 1
 
@@ -81,7 +81,7 @@ class Main:
             case "down": arrow = self.arrow[2]
         Bullet(pos, dir, arrow, [self.all_sprites, self.bullets])
     
-    def create_bullet(self, pos, dir, status):
+    def create_fireball(self, pos, dir, status):
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
     
     def death(self):
@@ -108,9 +108,9 @@ class Main:
     def setup_enemy(self, w1, w2):
         for obj in self.tmx_map.get_layer_by_name("enemy"):
             if obj.name == "Enemy" and (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
-                match random.randint(0, 2):
+                match 3:
                     case 0 :
-                        self.monster = MonsterRange(
+                        self.monster = MonsterCrossBow(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
                             path=PATHS["esqueletoCrossbow"],
@@ -122,7 +122,7 @@ class Main:
                             animations=CROSSBOW_ANIMATIONS
                         )
                     case 1 :
-                        self.monster = MonsterCloseRange(
+                        self.monster = MonsterSword(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
                             path=PATHS["esqueletoSword"],
@@ -133,7 +133,7 @@ class Main:
                             animations=SWORD_ANIMATIONS
                         )
                     case 2 :
-                        self.monster = MonsterRange(
+                        self.monster = MonsterBow(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
                             path=PATHS["esqueletoBow"],
@@ -143,6 +143,18 @@ class Main:
                             player=self.player,
                             shot_speed=1000,
                             animations=BOW_ANIMATIONS
+                        )
+                    case 3 :
+                        self.monster = MonsterStaff(
+                            pos=(obj.x, obj.y),
+                            groups=[self.all_sprites, self.enemy],
+                            path=PATHS["esqueletoMagic"],
+                            collision_sprites=self.colliders,
+                            create_bullet=self.create_fireball,
+                            health = 5,
+                            player=self.player,
+                            shot_speed=1000,
+                            animations=MAGIC_ANIMATIONS
                         )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
@@ -159,7 +171,7 @@ class Main:
         self.setup_enemy(2, 4)
         for obj in self.tmx_map.get_layer_by_name("boss"):
             if obj.name == "Boss":
-                self.monster = MonsterCloseRange(
+                self.monster = MonsterSword(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
                     path=PATHS["esqueletoSword"],

@@ -54,7 +54,7 @@ class Entity(pygame.sprite.Sprite, Subject):
                 self.animations[status] = []
             for j in range(frames):
                 j2 = j
-                if "bow" in path:
+                if "/bow" in path:
                     j3 = 0.5
                 else:
                     j3 = 1
@@ -62,8 +62,11 @@ class Entity(pygame.sprite.Sprite, Subject):
                     j2 = j3+(space*j)
                     if j == 0:
                         j2 = j3
+                    i2 = float(i)
+                else:
+                    i2 = round(float(i))
             
-                image = get_image(surf, j2, float(i), PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
+                image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
                 self.animations[status].append(image)
 
 
