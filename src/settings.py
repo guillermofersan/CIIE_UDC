@@ -10,11 +10,12 @@ PATHS = {
     "bullet": "graphics/weapon/bullet.png",
     "fireball": "graphics/weapon/fireball.png",
     "map": "data/tumba.tmx",
-    "esqueleto": "graphics/esqueleto/nothing.png",
-    "esqueletoSword": "graphics/esqueleto/sword.png",
-    "esqueletoCrossbow": "graphics/esqueleto/crossbow.png",
-    "esqueletoBow": "graphics/esqueleto/bow.png",
-    "esqueletoMagic": "graphics/esqueleto/magicStaff.png",
+    "esqueleto": "graphics/esqueleto/",
+    "humano1": "graphics/humano1/",
+    "humano2": "graphics/humano2/",
+    "momia": "graphics/momia/",
+    "zombie1": "graphics/zombie1/",
+    "zombie2": "graphics/zombie2/",
 
 }
 

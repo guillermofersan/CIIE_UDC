@@ -107,13 +107,20 @@ class Main:
 
     def setup_enemy(self, w1, w2):
         for obj in self.tmx_map.get_layer_by_name("enemy"):
-            if obj.name == "Enemy" and (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
-                match 3:
+            if (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
+                match obj.name:
+                    case "Humano1": path = PATHS["humano1"]
+                    case "Humano2": path = PATHS["humano2"]
+                    case "Momia": path = PATHS["momia"]
+                    case "Zombie1": path = PATHS["zombie1"]
+                    case "Zombie2": path = PATHS["zombie2"]
+                    case "Esqueleto": path = PATHS["humano1"]
+                match random.randint(0, 3):
                     case 0 :
                         self.monster = MonsterCrossBow(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
-                            path=PATHS["esqueletoCrossbow"],
+                            path=path+"crossbow.png",
                             collision_sprites=self.colliders,
                             create_bullet=self.create_arrow,
                             health = 5,
@@ -125,7 +132,7 @@ class Main:
                         self.monster = MonsterSword(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
-                            path=PATHS["esqueletoSword"],
+                            path=path+"sword.png",
                             collision_sprites=self.colliders,
                             health = 10,
                             player=self.player,
@@ -136,7 +143,7 @@ class Main:
                         self.monster = MonsterBow(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
-                            path=PATHS["esqueletoBow"],
+                            path=path+"bow.png",
                             collision_sprites=self.colliders,
                             create_bullet=self.create_arrow,
                             health = 5,
@@ -148,7 +155,7 @@ class Main:
                         self.monster = MonsterStaff(
                             pos=(obj.x, obj.y),
                             groups=[self.all_sprites, self.enemy],
-                            path=PATHS["esqueletoMagic"],
+                            path=path+"magicStaff.png",
                             collision_sprites=self.colliders,
                             create_bullet=self.create_fireball,
                             health = 5,
