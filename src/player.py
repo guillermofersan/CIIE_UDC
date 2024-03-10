@@ -67,7 +67,7 @@ class Player(Entity):
                     case "down":
                         bullet_offset[0] = bullet_offset[0]-5
                         bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, self.bullet_dir)
+            self.create_bullet(bullet_offset, self.bullet_dir, self.status)
             self.is_shooting = True
 
         if self.frame_index >= len(current_animation):
@@ -79,6 +79,7 @@ class Player(Entity):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
 
     def collision(self, dir):
         if ((WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH

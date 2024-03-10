@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="11" nextobjectid="19">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="20">
  <tileset firstgid="1" name="Plant" tilewidth="16" tileheight="16" tilecount="1024" columns="32">
   <image source="tilesets_tumba/Plant.png" width="512" height="512"/>
  </tileset>
@@ -264,7 +264,7 @@
   <object id="6" name="Enemy" x="721.157" y="408.507">
    <point/>
   </object>
-  <object id="7" name="Enemy" x="400.873" y="730.869">
+  <object id="7" name="Enemy" x="399.873" y="701.869">
    <point/>
   </object>
   <object id="10" name="Enemy" x="1184" y="108">
@@ -291,7 +291,9 @@
   <object id="17" name="Enemy" x="2002.67" y="721.333">
    <point/>
   </object>
-  <object id="18" name="Boss" x="2222.67" y="402.667">
+ </objectgroup>
+ <objectgroup id="11" name="boss">
+  <object id="19" name="Boss" x="2222" y="391">
    <point/>
   </object>
  </objectgroup>

@@ -1,10 +1,11 @@
 import sys
+import random
 
 import pygame
 from pytmx.util_pygame import load_pygame
 
 from player import Player
-from monster import Monster
+from monster import *
 from settings import *
 from sprite import Bullet
 from sprite import Sprite
@@ -72,15 +73,15 @@ class Main:
 
         self.setup()
 
-    def create_arrow(self, pos, dir):
-        match self.player.status.split("_")[0]:
+    def create_arrow(self, pos, dir, status):
+        match status.split("_")[0]:
             case "left": arrow = self.arrow[1]
             case "right": arrow = self.arrow[3]
             case "up": arrow = self.arrow[0]
             case "down": arrow = self.arrow[2]
         Bullet(pos, dir, arrow, [self.all_sprites, self.bullets])
     
-    def create_bullet(self, pos, dir):
+    def create_bullet(self, pos, dir, status):
         Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
     
     def death(self):
@@ -104,48 +105,46 @@ class Main:
     def start_scroll(self):
         self.scroll = True
 
-    def setup_zona2(self):
-        self.zona_actual = 2
+    def setup_enemy(self, w1, w2):
         for obj in self.tmx_map.get_layer_by_name("enemy"):
-            if obj.name == "Enemy" and WINDOW_WIDTH < obj.x < WINDOW_WIDTH * 2:
-                self.monster = Monster(
-                    pos=(obj.x, obj.y),
-                    groups=[self.all_sprites, self.enemy],
-                    path=PATHS["esqueletoSword"],
-                    collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet,
-                    health = 5,
-                    player=self.player,
-                    shot_speed=500,
-                    animations=SWORD_ANIMATIONS
-                )
+            if obj.name == "Enemy" and (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
+                if random.randint(0, 1):
+                    self.monster = Monster(
+                        pos=(obj.x, obj.y),
+                        groups=[self.all_sprites, self.enemy],
+                        path=PATHS["esqueletoCrossbow"],
+                        collision_sprites=self.colliders,
+                        create_bullet=self.create_arrow,
+                        health = 5,
+                        player=self.player,
+                        shot_speed=1000,
+                        animations=CROSSBOW_ANIMATIONS
+                    )
+                else:
+                    self.monster = MonsterCloseRange(
+                        pos=(obj.x, obj.y),
+                        groups=[self.all_sprites, self.enemy],
+                        path=PATHS["esqueletoSword"],
+                        collision_sprites=self.colliders,
+                        health = 10,
+                        player=self.player,
+                        shot_speed=500,
+                        animations=SWORD_ANIMATIONS
+                    )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
                 healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
                 self.monster.attach(healthBar)
                 self.monster.healthBar = healthBar
+
+    def setup_zona2(self):
+        self.zona_actual = 2
+        self.setup_enemy(1, 2)
 
     def setup_zona3(self):
         self.zona_actual = 3
-        for obj in self.tmx_map.get_layer_by_name("enemy"):
-            if obj.name == "Enemy" and WINDOW_WIDTH * 2 < obj.x < WINDOW_WIDTH * 4:
-                self.monster = Monster(
-                    pos=(obj.x, obj.y),
-                    groups=[self.all_sprites, self.enemy],
-                    path=PATHS["esqueletoSword"],
-                    collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet,
-                    health = 5,
-                    player=self.player,
-                    shot_speed=500,
-                    animations=SWORD_ANIMATIONS
-                )
-                w = self.monster.image.get_size()[0]
-                h = self.monster.image.get_size()[1]
-                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
-                self.monster.attach(healthBar)
-                self.monster.healthBar = healthBar
-
+        self.setup_enemy(2, 4)
+        for obj in self.tmx_map.get_layer_by_name("boss"):
             if obj.name == "Boss":
                 self.monster = Monster(
                     pos=(obj.x, obj.y),
@@ -191,24 +190,7 @@ class Main:
                 self.player.attach(healthBar)
                 self.player.healthBar = healthBar
                 
-        for obj in self.tmx_map.get_layer_by_name("enemy"):
-            if obj.name == "Enemy" and obj.x < WINDOW_WIDTH:
-                self.monster = Monster(
-                    pos=(obj.x, obj.y),
-                    groups=[self.all_sprites, self.enemy],
-                    path=PATHS["esqueletoSword"],
-                    collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet,
-                    health = 5,
-                    player=self.player,
-                    shot_speed=500,
-                    animations=SWORD_ANIMATIONS
-                )
-                w = self.monster.image.get_size()[0]
-                h = self.monster.image.get_size()[1]
-                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 5, self.healthBar)
-                self.monster.attach(healthBar)
-                self.monster.healthBar = healthBar
+        self.setup_enemy(0, 1)
 
     def run(self):
         one = True

@@ -10,7 +10,8 @@ PATHS = {
     "bullet": "graphics/weapon/bullet.png",
     "map": "data/tumba.tmx",
     "esqueleto": "graphics/esqueleto/nothing.png",
-    "esqueletoSword": "graphics/esqueleto/sword.png"
+    "esqueletoSword": "graphics/esqueleto/sword.png",
+    "esqueletoCrossbow": "graphics/esqueleto/crossbow.png",
 }
 
 SWORD_ANIMATIONS = {

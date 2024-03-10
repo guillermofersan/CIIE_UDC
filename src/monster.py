@@ -48,7 +48,7 @@ class Monster(Entity,Enemy):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
 
         self.player = player
-        self.attack_radius = 50
+        self.attack_radius = 100
         self.speed = 10
         self.shot_speed = shot_speed
         self.shoot_time = 0
@@ -80,8 +80,8 @@ class Monster(Entity,Enemy):
 
         if  self.is_attacking and not self.is_shooting:
             direction = self.get_player_distance_direction()[1]
-            bullet_offset = self.rect.center + direction*13
-            self.create_bullet(bullet_offset, direction)
+            bullet_offset = self.rect.center + direction*25
+            self.create_bullet(bullet_offset, direction, self.status)
             self.shoot_time = pygame.time.get_ticks()
             self.is_shooting = True
 
@@ -91,6 +91,101 @@ class Monster(Entity,Enemy):
                 self.is_attacking = False
 
         self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
+
+
+    def check_death(self):
+        super().check_death()
+        if self.health <= 0:
+                self.healthBar.kill()
+
+
+
+    def collision(self, dir):
+        for sprite in self.collision_sprites.sprites():
+            if sprite.hitbox.colliderect(self.hitbox):
+                if dir == "horizontal":
+                    if self.dir.x > 0:  # derecha
+                        self.hitbox.right = sprite.hitbox.left
+                    if self.dir.x < 0:  # izquierda
+                        self.hitbox.left = sprite.hitbox.right
+                    self.rect.centerx = self.hitbox.centerx
+                    self.pos.x = self.hitbox.centerx
+                else:  # vertical
+                    if self.dir.y > 0:  # arriba
+                        self.hitbox.bottom = sprite.hitbox.top
+                    if self.dir.y < 0:  # arriba
+                        self.hitbox.top = sprite.hitbox.bottom
+                    self.rect.centery = self.hitbox.centery
+                    self.pos.y = self.hitbox.centery
+
+    def vulnerability_timer(self):
+        if not self.is_vulnerable:
+            current_time = pygame.time.get_ticks()
+            if current_time - self.hit_time > 40:
+                self.is_vulnerable = True
+
+    def update(self, dt):
+
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
+
+            
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
+
+            self.vulnerability_timer()
+            self.check_death()
+
+
+
+
+
+class MonsterCloseRange(Entity,Enemy):
+    def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, animations)
+
+        self.player = player
+        self.attack_radius = 50
+        self.speed = 10
+        self.shot_speed = shot_speed
+        self.shoot_time = 0
+
+        self.healthBar = None
+
+    def giveHealthBar(self, healthBar: HealthBar):
+        self.healthBar = healthBar
+
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking:
+            self.is_attacking = True
+            self.frame_index = 0
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
+
+        self.frame_index += 7 * dt
+
+        if  self.is_attacking and int(self.frame_index) == 4:
+            if self.get_player_distance_direction()[0] < self.attack_radius:
+                self.player.damage(2)
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+            if self.is_attacking:
+                self.is_attacking = False
+
+        self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
 
 
     def check_death(self):
