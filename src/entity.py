@@ -48,6 +48,12 @@ class Entity(pygame.sprite.Sprite, Subject):
         surf = pygame.image.load(path).convert_alpha()
 
         for i in animations:
+            extraW = 0
+            extraH = 0
+            if ":" in animations[i]:
+                extraW = int(animations[i].split(':')[1])
+                extraH = int(animations[i].split(':')[2])
+            animations[i] = animations[i].split(':')[0]
             status = animations[i].split('.')[0]
             frames = int(animations[i].split('.')[1])
             space = 0
@@ -71,8 +77,8 @@ class Entity(pygame.sprite.Sprite, Subject):
                 scale = 1
                 if "boss" in path:
                     scale = 2
-            
-                image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, scale, (0,0,0))
+
+                image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, scale, (0,0,0), extraW, extraH)
                 self.animations[status].append(image)
 
 

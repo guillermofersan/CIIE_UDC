@@ -23,14 +23,16 @@ PATHS = {
     "staff": "graphics/weapon/staff.png",
     "mace": "graphics/weapon/maza.png",
     "latigo": "graphics/weapon/latigo.png",
-    "crossbow": "graphics/weapon/bullet.png",
+    "crossbow": "graphics/weapon/crossbow.png",
     "hacha": "graphics/weapon/hacha.png",
+    "spear": "graphics/weapon/spear.png",
+    "spearP": "graphics/Personaje/spear.png",
     "swordP": "graphics/Personaje/sword.png",
     "bowP": "graphics/Personaje/bow.png",
     "staffP": "graphics/Personaje/staff.png",
     "maceP": "graphics/Personaje/mace.png",
     "latigoP": "graphics/Personaje/latigo.png",
-    "crossbowP": "graphics/Personaje/bullet.png",
+    "crossbowP": "graphics/Personaje/crossbow.png",
     "hachaP": "graphics/Personaje/axe.png",
 
 
@@ -106,7 +108,37 @@ MAGIC_ANIMATIONS = {
 
 MACE_ANIMATIONS = SWORD_ANIMATIONS
 
-LATIGO_ANIMATIONS = SWORD_ANIMATIONS
+SPEAR_ANIMATIONS = {
+    "10":"down.9",
+    "6":"down_attack.8",
+    "10.2":"down_idle.1",
+    "9":"left.9",
+    "5":"left_attack.8",
+    "9.2":"left_idle.1",
+    "8":"up.9",
+    "4":"up_attack.8",
+    "8.2":"up_idle.1",
+    "11":"right.9",
+    "7":"right_attack.8",
+    "11.2":"right_idle.1",
+    "20":"death.6",
+}
+
+LATIGO_ANIMATIONS = {
+    "10":"down.9",
+    "28":"down_attack.8.3:0:64",
+    "10.2":"down_idle.1",
+    "9":"left.9",
+    "25":"left_attack.8.3:-64:0",
+    "9.2":"left_idle.1",
+    "8":"up.9",
+    "22":"up_attack.8.3:64:0",
+    "8.2":"up_idle.1",
+    "11":"right.9",
+    "31":"right_attack.8.3:64:0",
+    "11.2":"right_idle.1",
+    "20":"death.6",
+}
 
 ANIMATIONS = {
     "sword": SWORD_ANIMATIONS,
@@ -116,4 +148,5 @@ ANIMATIONS = {
     "latigo": LATIGO_ANIMATIONS,
     "crossbow": CROSSBOW_ANIMATIONS,
     "hacha": AXE_ANIMATIONS,
+    "spear": SPEAR_ANIMATIONS
 }

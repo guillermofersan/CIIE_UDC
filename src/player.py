@@ -85,6 +85,9 @@ class Player(Entity):
                     case "latigo":
                         self.is_attacking = True
                         self.frame_index = 0 
+                    case "spear":
+                        self.is_attacking = True
+                        self.frame_index = 0 
             if keys[pygame.K_e]:
                 for sprite in self.weapon_sprites:
                     if sprite.hitbox.colliderect(self.hitbox):
@@ -137,6 +140,11 @@ class Player(Entity):
                     self.is_shooting = True
             case "sword":
                 if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(2)
+            case "spear":
+                if self.is_attacking and  int(self.frame_index) == 6 and self.status != "death":
                     collisions = pygame.sprite.spritecollide(self, self.enemies, False)
                     if collisions:
                         collisions[0].damage(2)

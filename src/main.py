@@ -56,7 +56,7 @@ class Main:
         arrow_surf = GestorRecursos.load('arrow')
         self.arrow = []
         for i in range(4):
-            self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0)))
+            self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0), 0, 0))
         self.bullet_surf = GestorRecursos.load('fireball')
         self.tmx_map = GestorRecursos.load('map', type='map')
         self.zona_actual = 1
@@ -118,6 +118,7 @@ class Main:
                     case "crossbow": Weapon((obj.x, obj.y), pygame.image.load(PATHS["crossbow"]).convert_alpha(), [self.weapons, self.all_sprites], "crossbow")
                     case "staff": Weapon((obj.x, obj.y), pygame.image.load(PATHS["staff"]).convert_alpha(), [self.weapons, self.all_sprites], "staff")
                     case "hacha": Weapon((obj.x, obj.y), pygame.image.load(PATHS["hacha"]).convert_alpha(), [self.weapons, self.all_sprites], "hacha")
+                    case "spear": Weapon((obj.x, obj.y), pygame.image.load(PATHS["spear"]).convert_alpha(), [self.weapons, self.all_sprites], "spear")
 
     def setup_enemy(self, w1, w2):
         for obj in self.tmx_map.get_layer_by_name("enemy"):
