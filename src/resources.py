@@ -3,7 +3,7 @@ from pytmx.util_pygame import load_pygame
 
 from settings import *
 
-class GestorRecursos:
+class ResourceManager:
     recursos = {}
 
     @classmethod
