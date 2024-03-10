@@ -12,6 +12,7 @@ PATHS = {
     "esqueleto": "graphics/esqueleto/nothing.png",
     "esqueletoSword": "graphics/esqueleto/sword.png",
     "esqueletoCrossbow": "graphics/esqueleto/crossbow.png",
+    "esqueletoBow": "graphics/esqueleto/bow.png",
 }
 
 SWORD_ANIMATIONS = {
@@ -42,6 +43,22 @@ CROSSBOW_ANIMATIONS = {
     "8.2":"up_idle.1",
     "11":"right.9",
     "7":"right_attack.8",
+    "11.2":"right_idle.1",
+    "20":"death.6",
+}
+
+BOW_ANIMATIONS = {
+    "25.5":"down.7.2",
+    "18":"down_attack.13",
+    "10.2":"down_idle.1",
+    "23.5":"left.7.2",
+    "17":"left_attack.13",
+    "9.2":"left_idle.1",
+    "21.5":"up.7.2",
+    "16":"up_attack.13",
+    "8.2":"up_idle.1",
+    "27.5":"right.7.2",
+    "19":"right_attack.13",
     "11.2":"right_idle.1",
     "20":"death.6",
 }

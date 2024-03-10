@@ -43,7 +43,7 @@ class Enemy:
 
 
 
-class Monster(Entity,Enemy):
+class MonsterRange(Entity,Enemy):
     def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
 
@@ -78,9 +78,19 @@ class Monster(Entity,Enemy):
 
         self.frame_index += 7 * dt
 
-        if  self.is_attacking and not self.is_shooting:
+        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 6:
             direction = self.get_player_distance_direction()[1]
-            bullet_offset = self.rect.center + direction*25
+            bullet_offset = self.rect.center + direction*35
+            match self.status.split("_")[0]:
+                    case "left":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "right":
+                        bullet_offset[1] = bullet_offset[1]+10
+                    case "up":
+                        bullet_offset[0] = bullet_offset[0]+5
+                    case "down":
+                        bullet_offset[0] = bullet_offset[0]-5
+                        bullet_offset[1] = bullet_offset[1]+5
             self.create_bullet(bullet_offset, direction, self.status)
             self.shoot_time = pygame.time.get_ticks()
             self.is_shooting = True
