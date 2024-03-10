@@ -3,6 +3,7 @@ from pygame.math import Vector2 as vector
 from entity import Entity
 from os import walk
 from healthBar import HealthBar
+from settings import *
 
 class Enemy:
 
@@ -259,6 +260,7 @@ class MonsterStaff(Monster):
                         bullet_offset[0] = bullet_offset[0]-10
                     case "right":
                         bullet_offset[1] = bullet_offset[1]+10
+                        bullet_offset[0] = bullet_offset[0]+10
                     case "up":
                         bullet_offset[0] = bullet_offset[0]+5
                     case "down":
@@ -327,6 +329,70 @@ class MonsterSword(Monster):
 
         self.image = current_animation[int(self.frame_index)]
         self.mask = pygame.mask.from_surface(self.image)
+
+
+    def update(self, dt):
+
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
+
+            
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
+
+            self.vulnerability_timer()
+            self.check_death()
+
+
+
+class MonsterBoss(Monster):
+    def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+
+        self.attack_radius = 100
+        self.speed = 20
+        self.transformation = False
+        self.maxHealth = health
+
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking:
+            self.is_attacking = True
+            self.frame_index = 0
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+    def animate(self, dt):
+        current_animation = self.animations[self.status]
+
+        self.frame_index += 7 * dt
+
+        if  self.is_attacking and int(self.frame_index) == 4:
+            if self.get_player_distance_direction()[0] < self.attack_radius:
+                self.player.damage(2)
+
+        if self.frame_index >= len(current_animation):
+            self.frame_index = 0
+            if self.is_attacking:
+                self.is_attacking = False
+
+        self.image = current_animation[int(self.frame_index)]
+        self.mask = pygame.mask.from_surface(self.image)
+    
+    def check_death(self):
+        if not self.transformation and self.health < (self.maxHealth/2):
+            self.transformation = True
+            print("ouch")
+            self.changeSprite(PATHS["bossH"], SWORD_ANIMATIONS)
+        super().check_death()
+        
+
 
 
     def update(self, dt):

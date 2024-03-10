@@ -16,6 +16,9 @@ PATHS = {
     "momia": "graphics/momia/",
     "zombie1": "graphics/zombie1/",
     "zombie2": "graphics/zombie2/",
+    "bossH": "graphics/boss/herido/hacha.png",
+    "bossN": "graphics/boss/normal/hacha.png",
+
 
 }
 

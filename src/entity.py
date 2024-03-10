@@ -40,6 +40,9 @@ class Entity(pygame.sprite.Sprite, Subject):
         self.hit_time = None
 
 
+    def changeSprite(self, path, animations):
+        self.animations = {}
+        self.import_assets(path, animations)
 
     def import_assets(self, path, animations):
         surf = pygame.image.load(path).convert_alpha()
@@ -65,8 +68,11 @@ class Entity(pygame.sprite.Sprite, Subject):
                     i2 = float(i)
                 else:
                     i2 = round(float(i))
+                scale = 1
+                if "boss" in path:
+                    scale = 2
             
-                image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, 1, (0,0,0))
+                image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, scale, (0,0,0))
                 self.animations[status].append(image)
 
 

@@ -106,6 +106,23 @@ class Main:
         self.scroll = True
 
     def setup_enemy(self, w1, w2):
+        for obj in self.tmx_map.get_layer_by_name("boss"):
+            if obj.name == "Boss":
+                self.monster = MonsterBoss(
+                    pos=(obj.x, obj.y),
+                    groups=[self.all_sprites, self.enemy],
+                    path=PATHS["bossN"],
+                    collision_sprites=self.colliders,
+                    health = 3,
+                    player=self.player,
+                    shot_speed=500,
+                    animations=SWORD_ANIMATIONS
+                )
+                w = self.monster.image.get_size()[0]
+                h = self.monster.image.get_size()[1]
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 20, self.healthBar)
+                self.monster.attach(healthBar)
+                self.monster.healthBar = healthBar
         for obj in self.tmx_map.get_layer_by_name("enemy"):
             if (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
                 match obj.name:
@@ -181,10 +198,9 @@ class Main:
                 self.monster = MonsterSword(
                     pos=(obj.x, obj.y),
                     groups=[self.all_sprites, self.enemy],
-                    path=PATHS["esqueletoSword"],
+                    path=PATHS["bossN"],
                     collision_sprites=self.colliders,
-                    create_bullet=self.create_bullet,
-                    health = 20,
+                    health = 3,
                     player=self.player,
                     shot_speed=500,
                     animations=SWORD_ANIMATIONS
