@@ -389,7 +389,7 @@ class MonsterBoss(Monster):
         if not self.transformation and self.health < (self.maxHealth/2):
             self.transformation = True
             print("ouch")
-            self.changeSprite(PATHS["bossH"], SWORD_ANIMATIONS)
+            self.changeSprite(PATHS["bossH"], AXE_ANIMATIONS)
         super().check_death()
         
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="24">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="13" nextobjectid="31">
  <tileset firstgid="1" name="Plant" tilewidth="16" tileheight="16" tilecount="1024" columns="32">
   <image source="tilesets_tumba/Plant.png" width="512" height="512"/>
  </tileset>
@@ -305,7 +305,27 @@
   <object id="19" name="Boss" x="2222" y="391">
    <point/>
   </object>
-  <object id="23" name="Boss" x="460" y="331">
+ </objectgroup>
+ <objectgroup id="12" name="weapon">
+  <object id="24" name="sword" x="76" y="493">
+   <point/>
+  </object>
+  <object id="25" name="latigo" x="128" y="490">
+   <point/>
+  </object>
+  <object id="26" name="mace" x="189" y="489">
+   <point/>
+  </object>
+  <object id="27" name="bow" x="247" y="487">
+   <point/>
+  </object>
+  <object id="28" name="crossbow" x="79" y="560">
+   <point/>
+  </object>
+  <object id="29" name="staff" x="139" y="557">
+   <point/>
+  </object>
+  <object id="30" name="hacha" x="246" y="544">
    <point/>
   </object>
  </objectgroup>

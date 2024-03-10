@@ -6,13 +6,17 @@ from settings import *
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll, animations):
+    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll, animations, weapon_sprites, enemies, create_magic):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
         self.death = death
         self.is_shooting = False
         self.create_bullet = create_bullet
+        self.create_magic = create_magic
         self.start_scroll = start_scroll
         self.healthBar = None
+        self.weapon = "crossbow"
+        self.weapon_sprites = weapon_sprites
+        self.enemies = enemies
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -37,15 +41,60 @@ class Player(Entity):
                 self.dir.y = 0
 
             if keys[pygame.K_SPACE]:
-                self.is_attacking = True
-                self.dir = vector()
-                self.frame_index = 0  # empieza la animación desde el primer frame
-                self.is_shooting = False
-                match self.status.split("_")[0]:
-                    case "left": self.bullet_dir = vector(-1, 0)
-                    case "right": self.bullet_dir = vector(1, 0)
-                    case "up": self.bullet_dir = vector(0, -1)
-                    case "down": self.bullet_dir = vector(0, 1)
+                 match self.weapon:
+                    case "bow":
+                        self.is_attacking = True
+                        self.dir = vector()
+                        self.frame_index = 0  # empieza la animación desde el primer frame
+                        self.is_shooting = False
+                        match self.status.split("_")[0]:
+                            case "left": self.bullet_dir = vector(-1, 0)
+                            case "right": self.bullet_dir = vector(1, 0)
+                            case "up": self.bullet_dir = vector(0, -1)
+                            case "down": self.bullet_dir = vector(0, 1)
+                        
+                    case "crossbow":
+                        self.is_attacking = True
+                        self.dir = vector()
+                        self.frame_index = 0  # empieza la animación desde el primer frame
+                        self.is_shooting = False
+                        match self.status.split("_")[0]:
+                            case "left": self.bullet_dir = vector(-1, 0)
+                            case "right": self.bullet_dir = vector(1, 0)
+                            case "up": self.bullet_dir = vector(0, -1)
+                            case "down": self.bullet_dir = vector(0, 1)
+                    case "sword":
+                        self.is_attacking = True
+                        self.frame_index = 0 
+                    case "mace":
+                        self.is_attacking = True
+                        self.frame_index = 0 
+                    case "staff":
+                        self.is_attacking = True
+                        self.dir = vector()
+                        self.frame_index = 0  # empieza la animación desde el primer frame
+                        self.is_shooting = False
+                        match self.status.split("_")[0]:
+                            case "left": self.bullet_dir = vector(-1, 0)
+                            case "right": self.bullet_dir = vector(1, 0)
+                            case "up": self.bullet_dir = vector(0, -1)
+                            case "down": self.bullet_dir = vector(0, 1)
+                    case "hacha":
+                        self.is_attacking = True
+                        self.frame_index = 0 
+                    case "latigo":
+                        self.is_attacking = True
+                        self.frame_index = 0 
+            if keys[pygame.K_e]:
+                for sprite in self.weapon_sprites:
+                    if sprite.hitbox.colliderect(self.hitbox):
+                        self.changeWeapon(sprite.name)
+
+
+
+    def changeWeapon(self, name):
+        self.weapon = name
+        self.changeSprite(PATHS[(name+"P")], ANIMATIONS[name])
 
 
     def animate(self, dt):
@@ -55,20 +104,77 @@ class Player(Entity):
         else:
             self.frame_index += 14 * dt
 
-        if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
-            bullet_offset = self.rect.center + self.bullet_dir*35
-            match self.status.split("_")[0]:
-                    case "left":
-                        bullet_offset[1] = bullet_offset[1]+10
-                    case "right":
-                        bullet_offset[1] = bullet_offset[1]+10
-                    case "up":
-                        bullet_offset[0] = bullet_offset[0]+5
-                    case "down":
-                        bullet_offset[0] = bullet_offset[0]-5
-                        bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, self.bullet_dir, self.status)
-            self.is_shooting = True
+        match self.weapon:
+            case "bow":
+                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
+                    bullet_offset = self.rect.center + self.bullet_dir*35
+                    match self.status.split("_")[0]:
+                            case "left":
+                                bullet_offset[1] = bullet_offset[1]+10
+                            case "right":
+                                bullet_offset[1] = bullet_offset[1]+10
+                            case "up":
+                                bullet_offset[0] = bullet_offset[0]+5
+                            case "down":
+                                bullet_offset[0] = bullet_offset[0]-5
+                                bullet_offset[1] = bullet_offset[1]+5
+                    self.create_bullet(bullet_offset, self.bullet_dir, self.status)
+                    self.is_shooting = True
+            case "crossbow":
+                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
+                    bullet_offset = self.rect.center + self.bullet_dir*35
+                    match self.status.split("_")[0]:
+                            case "left":
+                                bullet_offset[1] = bullet_offset[1]+10
+                            case "right":
+                                bullet_offset[1] = bullet_offset[1]+10
+                            case "up":
+                                bullet_offset[0] = bullet_offset[0]+5
+                            case "down":
+                                bullet_offset[0] = bullet_offset[0]-5
+                                bullet_offset[1] = bullet_offset[1]+5
+                    self.create_bullet(bullet_offset, self.bullet_dir, self.status)
+                    self.is_shooting = True
+            case "sword":
+                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(2)
+            case "mace":
+                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(2)
+            case "staff":
+                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
+                    bullet_offset = self.rect.center + self.bullet_dir*35
+                    match self.status.split("_")[0]:
+                        case "left":
+                            bullet_offset[1] = bullet_offset[1]+10
+                            bullet_offset[0] = bullet_offset[0]-10
+                        case "right":
+                            bullet_offset[1] = bullet_offset[1]+10
+                            bullet_offset[0] = bullet_offset[0]+10
+                        case "up":
+                            bullet_offset[0] = bullet_offset[0]+5
+                        case "down":
+                            bullet_offset[0] = bullet_offset[0]-5
+                            bullet_offset[1] = bullet_offset[1]+5
+                    self.create_magic(bullet_offset, self.bullet_dir, self.status)
+                    self.is_shooting = True
+            case "hacha":
+                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(2)
+            case "latigo":
+                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(2)
+            
+
+        
 
         if self.frame_index >= len(current_animation):
             self.frame_index = 0

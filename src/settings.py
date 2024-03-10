@@ -18,9 +18,24 @@ PATHS = {
     "zombie2": "graphics/zombie2/",
     "bossH": "graphics/boss/herido/hacha.png",
     "bossN": "graphics/boss/normal/hacha.png",
+    "sword": "graphics/weapon/sword.png",
+    "bow": "graphics/weapon/bow.png",
+    "staff": "graphics/weapon/staff.png",
+    "mace": "graphics/weapon/maza.png",
+    "latigo": "graphics/weapon/latigo.png",
+    "crossbow": "graphics/weapon/bullet.png",
+    "hacha": "graphics/weapon/hacha.png",
+    "swordP": "graphics/Personaje/sword.png",
+    "bowP": "graphics/Personaje/bow.png",
+    "staffP": "graphics/Personaje/staff.png",
+    "maceP": "graphics/Personaje/mace.png",
+    "latigoP": "graphics/Personaje/latigo.png",
+    "crossbowP": "graphics/Personaje/bullet.png",
+    "hachaP": "graphics/Personaje/axe.png",
 
 
 }
+
 
 SWORD_ANIMATIONS = {
     "10":"down.9",
@@ -37,6 +52,8 @@ SWORD_ANIMATIONS = {
     "11.2":"right_idle.1",
     "20":"death.6",
 }
+
+AXE_ANIMATIONS = SWORD_ANIMATIONS
 
 CROSSBOW_ANIMATIONS = {
     "10":"down.9",
@@ -87,3 +104,16 @@ MAGIC_ANIMATIONS = {
     "20":"death.6",
 }
 
+MACE_ANIMATIONS = SWORD_ANIMATIONS
+
+LATIGO_ANIMATIONS = SWORD_ANIMATIONS
+
+ANIMATIONS = {
+    "sword": SWORD_ANIMATIONS,
+    "bow": BOW_ANIMATIONS,
+    "staff": MAGIC_ANIMATIONS,
+    "mace": MACE_ANIMATIONS,
+    "latigo": LATIGO_ANIMATIONS,
+    "crossbow": CROSSBOW_ANIMATIONS,
+    "hacha": AXE_ANIMATIONS,
+}

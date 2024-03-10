@@ -23,3 +23,17 @@ class Bullet(pygame.sprite.Sprite):
     def update(self, dt):
         self.pos += self.dir * self.speed * dt
         self.rect.center = (round(self.pos.x), round(self.pos.y))
+
+
+class Weapon(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups, name):
+        super().__init__(groups)
+        self.name = name
+        self.image = surf
+        self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect.inflate(0, -self.rect.height / 3)
+
+        self.pos = pygame.math.Vector2(self.rect.center)
+
+    def taken(self):
+        self.kill()
