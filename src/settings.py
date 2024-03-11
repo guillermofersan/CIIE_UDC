@@ -38,6 +38,7 @@ PATHS = {
     "playbutton": "graphics/other/PlayButton.png",
     "quitbutton": "graphics/other/QuitButton.png",
     "menuBG": "graphics/other/MenuBackground.png",
+    "MainMenuButton": "graphics/other/MainMenuButton.png",
 
 
 }
