@@ -7,8 +7,8 @@ class ResourceManager:
     recursos = {}
 
     @classmethod
-    def load(self, name, type='image', fontsize=50):
-        path = PATHS[name]
+    def load(self, name, is_path = False, type='image', fontsize=50):
+        path = name if is_path else PATHS[name]
         if path in self.recursos:
             return self.recursos[name]
         else:

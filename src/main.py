@@ -15,5 +15,4 @@ if __name__ == "__main__":
     pygame.init()
     director = Director()
     main_menu(director)
-    # director.run()
     pygame.quit()

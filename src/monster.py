@@ -4,10 +4,9 @@ from entity import Entity
 from os import walk
 from healthBar import HealthBar
 from settings import *
+from sprite import *
 
 class Enemy:
-
-
     def get_player_distance_direction(self):
         enemy_pos = vector(self.rect.center)
         player_pos = vector(self.player.rect.center)
@@ -43,8 +42,31 @@ class Enemy:
             self.dir = vector()
 
 
+class Melee:
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking:
+            self.is_attacking = True
+            self.frame_index = 0
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+class Distance:
+    def attack(self):
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_shooting = False
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
 class Monster(Entity, Enemy):
-    def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
+    def __init__(self, pos, groups, path, collision_sprites, health, player, shot_speed, animations):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
 
         self.player = player
@@ -58,9 +80,7 @@ class Monster(Entity, Enemy):
     def check_death(self):
         super().check_death()
         if self.health <= 0:
-                self.healthBar.kill()
-
-
+            self.healthBar.kill()
 
     def collision(self, dir):
         for sprite in self.collision_sprites.sprites():
@@ -89,34 +109,41 @@ class Monster(Entity, Enemy):
     def giveHealthBar(self, healthBar: HealthBar):
         self.healthBar = healthBar
 
+    def update(self, dt):
+        if self.player.status != "death":
+            self.face_player()
+            self.walk_to_player()
+            self.attack()
+
+            self.move(dt)
+            self.animate(dt)
+            self.blink()
+            self.healthBar.move(self.rect.left, self.rect.bottom)
+
+            self.vulnerability_timer()
+            self.check_death()
 
 
-class MonsterCrossBow(Monster):
-    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+class MonsterCrossBow(Monster, Distance):
+    def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        path = PATHS[name] + "crossbow.png"
+        health = 5
+        shot_speed = 1000
+        animations = CROSSBOW_ANIMATIONS
+        super().__init__(pos, groups, path, collision_sprites, health, player, shot_speed, animations)
 
         self.attack_radius = 100
         self.speed = 10
 
-        self.create_bullet = create_bullet
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
-            self.is_attacking = True
-            self.frame_index = 0
-            self.is_shooting = False
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
+        self.create_bullet = self.create_arrow
+        self.bullet_groups = bullet_groups
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
 
-        if  self.is_attacking and not self.is_shooting and int(self.frame_index) == 5:
+        if self.is_attacking and not self.is_shooting and int(self.frame_index) == 5:
             direction = self.get_player_distance_direction()[1]
             bullet_offset = self.rect.center + direction*40
             match self.status.split("_")[0]:
@@ -129,7 +156,7 @@ class MonsterCrossBow(Monster):
                     case "down":
                         bullet_offset[0] = bullet_offset[0]-5
                         bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, direction, self.status)
+            self.create_bullet(bullet_offset, direction, self.status, self.bullet_groups)
             self.shoot_time = pygame.time.get_ticks()
             self.is_shooting = True
 
@@ -142,41 +169,19 @@ class MonsterCrossBow(Monster):
         self.mask = pygame.mask.from_surface(self.image)
 
 
-    def update(self, dt):
-
-        if self.player.status != "death":
-            self.face_player()
-            self.walk_to_player()
-            self.attack()
-
-            
-            self.move(dt)
-            self.animate(dt)
-            self.blink()
-            self.healthBar.move(self.rect.left, self.rect.bottom)
-
-            self.vulnerability_timer()
-            self.check_death()
-
-class MonsterBow(Monster):
-    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+class MonsterBow(Monster, Distance):
+    def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        path = PATHS[name] + "bow.png"
+        health = 5
+        shot_speed = 1000
+        animations = BOW_ANIMATIONS
+        super().__init__(pos, groups, path, collision_sprites, health, player, shot_speed, animations)
 
         self.attack_radius = 100
         self.speed = 10
 
-        self.create_bullet = create_bullet
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
-            self.is_attacking = True
-            self.frame_index = 0
-            self.is_shooting = False
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
+        self.create_bullet = self.create_arrow
+        self.bullet_groups = bullet_groups
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -196,7 +201,7 @@ class MonsterBow(Monster):
                     case "down":
                         bullet_offset[0] = bullet_offset[0]-5
                         bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, direction, self.status)
+            self.create_bullet(bullet_offset, direction, self.status, self.bullet_groups)
             self.shoot_time = pygame.time.get_ticks()
             self.is_shooting = True
 
@@ -209,42 +214,19 @@ class MonsterBow(Monster):
         self.mask = pygame.mask.from_surface(self.image)
 
 
-    def update(self, dt):
-
-        if self.player.status != "death":
-            self.face_player()
-            self.walk_to_player()
-            self.attack()
-
-            
-            self.move(dt)
-            self.animate(dt)
-            self.blink()
-            self.healthBar.move(self.rect.left, self.rect.bottom)
-
-            self.vulnerability_timer()
-            self.check_death()
-
-
-class MonsterStaff(Monster):
-    def __init__(self, pos, groups, path, collision_sprites, health, player, create_bullet, shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+class MonsterStaff(Monster, Distance):
+    def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        path = PATHS[name] + "magicStaff.png"
+        health = 5
+        shot_speed = 1000
+        animations = MAGIC_ANIMATIONS
+        super().__init__(pos, groups, path, collision_sprites, health, player, shot_speed, animations)
 
         self.attack_radius = 100
         self.speed = 10
 
-        self.create_bullet = create_bullet
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
-            self.is_attacking = True
-            self.frame_index = 0
-            self.is_shooting = False
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
+        self.create_bullet = self.create_fireball
+        self.bullet_groups = bullet_groups
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -266,7 +248,7 @@ class MonsterStaff(Monster):
                     case "down":
                         bullet_offset[0] = bullet_offset[0]-5
                         bullet_offset[1] = bullet_offset[1]+5
-            self.create_bullet(bullet_offset, direction, self.status)
+            self.create_bullet(bullet_offset, direction, self.status, self.bullet_groups)
             self.shoot_time = pygame.time.get_ticks()
             self.is_shooting = True
 
@@ -279,39 +261,16 @@ class MonsterStaff(Monster):
         self.mask = pygame.mask.from_surface(self.image)
 
 
-    def update(self, dt):
-
-        if self.player.status != "death":
-            self.face_player()
-            self.walk_to_player()
-            self.attack()
-
-            
-            self.move(dt)
-            self.animate(dt)
-            self.blink()
-            self.healthBar.move(self.rect.left, self.rect.bottom)
-
-            self.vulnerability_timer()
-            self.check_death()
-
-
-class MonsterSword(Monster):
-    def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
+class MonsterSword(Monster, Melee):
+    def __init__(self, pos, groups, name, collision_sprites, player):
+        path = PATHS[name] + "sword.png"
+        health = 10
+        shot_speed = 500
+        animations = SWORD_ANIMATIONS
+        super().__init__(pos, groups, path, collision_sprites, health, player, shot_speed, animations)
 
         self.attack_radius = 50
         self.speed = 10
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking:
-            self.is_attacking = True
-            self.frame_index = 0
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -331,25 +290,7 @@ class MonsterSword(Monster):
         self.mask = pygame.mask.from_surface(self.image)
 
 
-    def update(self, dt):
-
-        if self.player.status != "death":
-            self.face_player()
-            self.walk_to_player()
-            self.attack()
-
-            
-            self.move(dt)
-            self.animate(dt)
-            self.blink()
-            self.healthBar.move(self.rect.left, self.rect.bottom)
-
-            self.vulnerability_timer()
-            self.check_death()
-
-
-
-class MonsterBoss(Monster):
+class MonsterBoss(Monster, Melee):
     def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
         super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
 
@@ -357,16 +298,6 @@ class MonsterBoss(Monster):
         self.speed = 20
         self.transformation = False
         self.maxHealth = health
-
-    def attack(self):
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking:
-            self.is_attacking = True
-            self.frame_index = 0
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
 
     def animate(self, dt):
         current_animation = self.animations[self.status]
@@ -391,22 +322,3 @@ class MonsterBoss(Monster):
             print("ouch")
             self.changeSprite(PATHS["bossH"], AXE_ANIMATIONS)
         super().check_death()
-        
-
-
-
-    def update(self, dt):
-
-        if self.player.status != "death":
-            self.face_player()
-            self.walk_to_player()
-            self.attack()
-
-            
-            self.move(dt)
-            self.animate(dt)
-            self.blink()
-            self.healthBar.move(self.rect.left, self.rect.bottom)
-
-            self.vulnerability_timer()
-            self.check_death()

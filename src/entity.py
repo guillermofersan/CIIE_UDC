@@ -5,10 +5,10 @@ from math import sin
 from observer import Observer, Subject
 from settings import *
 from utilities import *
+from resources import *
+from sprite import Bullet
 
 class Entity(pygame.sprite.Sprite, Subject):
-
-
     def __init__(self, pos, groups, path, collision_sprites, health, animations):
         super().__init__(groups)
 
@@ -39,13 +39,19 @@ class Entity(pygame.sprite.Sprite, Subject):
         self.is_vulnerable = True
         self.hit_time = None
 
+        arrow_surf = ResourceManager.load('arrow')
+        self.arrow = []
+        for i in range(4):
+            self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0), 0, 0))
+        self.bullet_surf = ResourceManager.load('fireball')
+
 
     def changeSprite(self, path, animations):
         self.animations = {}
         self.import_assets(path, animations)
 
     def import_assets(self, path, animations):
-        surf = pygame.image.load(path).convert_alpha()
+        surf = ResourceManager.load(path, is_path=True)
 
         for i in animations:
             extraW = 0
@@ -80,7 +86,6 @@ class Entity(pygame.sprite.Sprite, Subject):
 
                 image = get_image(surf, j2, i2, PLAYER_ANIMATIONSW, PLAYER_ANIMATIONSH, scale, (0,0,0), extraW, extraH)
                 self.animations[status].append(image)
-
 
     def attach(self, observer: Observer) -> None:
         self.observers.append(observer)
@@ -144,3 +149,13 @@ class Entity(pygame.sprite.Sprite, Subject):
         self.rect.centery = self.hitbox.centery
         self.collision("vertical")
 
+    def create_arrow(self, pos, dir, status, bullet_groups):
+        match status.split("_")[0]:
+            case "up": arrow = self.arrow[0]
+            case "left": arrow = self.arrow[1]
+            case "down": arrow = self.arrow[2]
+            case "right": arrow = self.arrow[3]
+        Bullet(pos, dir, arrow, bullet_groups)
+
+    def create_fireball(self, pos, dir, status, bullet_groups):
+        Bullet(pos, dir, self.bullet_surf, bullet_groups)

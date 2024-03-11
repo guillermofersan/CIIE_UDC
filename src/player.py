@@ -6,17 +6,18 @@ from settings import *
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, path, collision_sprites, create_bullet, health, death, start_scroll, animations, weapon_sprites, enemies, create_magic):
+    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
         self.death = death
         self.is_shooting = False
-        self.create_bullet = create_bullet
-        self.create_magic = create_magic
+        self.create_bullet = self.create_arrow
+        self.create_magic = self.create_fireball
         self.start_scroll = start_scroll
         self.healthBar = None
         self.weapon = "crossbow"
         self.weapon_sprites = weapon_sprites
         self.enemies = enemies
+        self.bullet_groups = bullet_groups
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -121,7 +122,7 @@ class Player(Entity):
                             case "down":
                                 bullet_offset[0] = bullet_offset[0]-5
                                 bullet_offset[1] = bullet_offset[1]+5
-                    self.create_bullet(bullet_offset, self.bullet_dir, self.status)
+                    self.create_bullet(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
                     self.is_shooting = True
             case "crossbow":
                 if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
@@ -136,7 +137,7 @@ class Player(Entity):
                             case "down":
                                 bullet_offset[0] = bullet_offset[0]-5
                                 bullet_offset[1] = bullet_offset[1]+5
-                    self.create_bullet(bullet_offset, self.bullet_dir, self.status)
+                    self.create_bullet(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
                     self.is_shooting = True
             case "sword":
                 if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
@@ -181,9 +182,6 @@ class Player(Entity):
                     if collisions:
                         collisions[0].damage(2)
             
-
-        
-
         if self.frame_index >= len(current_animation):
             self.frame_index = 0
             if self.status == "death":
@@ -200,8 +198,6 @@ class Player(Entity):
              or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2)
             and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
             self.start_scroll()
-            self.pos.x += 180
-            self.healthBar.x += WINDOW_WIDTH
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":

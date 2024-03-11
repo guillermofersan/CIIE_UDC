@@ -11,7 +11,7 @@ from monster import *
 from button import *
 from mainmenu import *
 
-class Director():
+class Director:
     def __init__(self):
         self.current_zone = Zone1(self)
         self.end_zone = False
@@ -20,11 +20,6 @@ class Director():
         pygame.display.set_caption("Los Secretos de FICrol")
         self.clock = pygame.time.Clock()
 
-        arrow_surf = ResourceManager.load('arrow')
-        self.arrow = []
-        for i in range(4):
-            self.arrow.append(get_image(arrow_surf, i, 0, 32, 32, 1, (0,0,0), 0, 0))
-        self.bullet_surf = ResourceManager.load('fireball')
         self.tmx_map = ResourceManager.load('map', type='map')
         self.zona_actual = 1
 
@@ -82,11 +77,18 @@ class Director():
                         pygame.quit()
                         sys.exit()
                     
-                if self.scroll:
-                    self.all_sprites.internal_offset.x -= 100
-                    if self.all_sprites.internal_offset.x % 800 == 0:
-                        self.scroll = False
-                        break
+                if self.current_zone.enemy_counter == 0:
+                    for obj in self.block:
+                        if obj.rect.right <= self.current_zone.right_border:
+                            obj.kill()
+                            self.all_sprites.remove(obj)
+                    if self.scroll:
+                        self.all_sprites.internal_offset.x -= 100
+                        if self.all_sprites.internal_offset.x % 800 == 0:
+                            self.player.pos.x += 180
+                            self.player.healthBar.x += WINDOW_WIDTH
+                            self.scroll = False
+                            break
 
                 dt = self.clock.tick() / 1000
         
@@ -104,49 +106,37 @@ class Director():
             pygame.display.update()
 
     def level_setup(self):
-        for x, y, surf in self.tmx_map.get_layer_by_name("intermedio").tiles():
+        for x, y, surf in self.get_map_layer("intermedio").tiles():
             Sprite((x * 16, y * 16), surf, self.all_sprites)
 
         self.block = []
-        for x, y, surf in self.tmx_map.get_layer_by_name("bloqueo").tiles():
+        for x, y, surf in self.get_map_layer("bloqueo").tiles():
             self.block.append(Sprite((x * 16, y * 16), surf, self.all_sprites))
 
-        for x, y, surf in self.tmx_map.get_layer_by_name("objetos").tiles():
+        for x, y, surf in self.get_map_layer("objetos").tiles():
             Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
 
-        for x, y, surf in self.tmx_map.get_layer_by_name("runas").tiles():
+        for x, y, surf in self.get_map_layer("runas").tiles():
             Sprite((x * 16, y * 16), surf, self.all_sprites)
 
-        for obj in self.tmx_map.get_layer_by_name("player"):
+        for obj in self.get_map_layer("player"):
             if obj.name == "Player":
                 self.player = Player(
                     pos=(obj.x, obj.y),
                     groups=self.all_sprites,
                     path=PATHS["player"],
                     collision_sprites=self.colliders,
-                    create_bullet=self.create_arrow,
                     health = 10,
                     death = self.death,
                     start_scroll = self.start_scroll,
                     animations=CROSSBOW_ANIMATIONS,
                     weapon_sprites=self.weapons,
                     enemies=self.enemy,
-                    create_magic=self.create_fireball
+                    bullet_groups=self.get_bullet_groups()
                 )
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
                 self.player.healthBar = healthBar
-
-    def create_arrow(self, pos, dir, status):
-        match status.split("_")[0]:
-            case "left": arrow = self.arrow[1]
-            case "right": arrow = self.arrow[3]
-            case "up": arrow = self.arrow[0]
-            case "down": arrow = self.arrow[2]
-        Bullet(pos, dir, arrow, [self.all_sprites, self.bullets])
-    
-    def create_fireball(self, pos, dir, status):
-        Bullet(pos, dir, self.bullet_surf, [self.all_sprites, self.bullets])
     
     def death(self):
         self.player_death = True
@@ -167,7 +157,26 @@ class Director():
             self.player.damage(1)
 
     def start_scroll(self):
-        self.scroll = True
+        if self.current_zone.enemy_counter == 0:
+            self.scroll = True
+
+    def get_map_layer(self, name):
+        return self.tmx_map.get_layer_by_name(name)
+    
+    def get_enemy_groups(self):
+        return [self.all_sprites, self.enemy]
+    
+    def get_colliders(self):
+        return self.colliders
+    
+    def get_health_bar(self):
+        return self.healthBar
+    
+    def get_player(self):
+        return self.player
+    
+    def get_bullet_groups(self):
+        return [self.all_sprites, self.bullets]
 
     def load_boss(self):
         for obj in self.tmx_map.get_layer_by_name("boss"):
@@ -177,95 +186,14 @@ class Director():
                     groups=[self.all_sprites, self.enemy],
                     path=PATHS["bossN"],
                     collision_sprites=self.colliders,
-                    health = 3,
+                    health = 20,
                     player=self.player,
                     shot_speed=500,
                     animations=AXE_ANIMATIONS
                 )
                 w = self.monster.image.get_size()[0]
                 h = self.monster.image.get_size()[1]
-                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 3, self.healthBar)
-                self.monster.attach(healthBar)
-                self.monster.healthBar = healthBar
-
-    def setup_weapons(self, w1, w2):
-        for obj in self.tmx_map.get_layer_by_name("weapon"):
-            if (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
-                match obj.name:
-                    case "sword": Weapon((obj.x, obj.y), pygame.image.load(PATHS["sword"]).convert_alpha(), [self.weapons, self.all_sprites], "sword")
-                    case "latigo": Weapon((obj.x, obj.y), pygame.image.load(PATHS["latigo"]).convert_alpha(), [self.weapons, self.all_sprites], "latigo")
-                    case "mace": Weapon((obj.x, obj.y), pygame.image.load(PATHS["mace"]).convert_alpha(), [self.weapons, self.all_sprites], "mace")
-                    case "bow": Weapon((obj.x, obj.y), pygame.image.load(PATHS["bow"]).convert_alpha(), [self.weapons, self.all_sprites], "bow")
-                    case "crossbow": Weapon((obj.x, obj.y), pygame.image.load(PATHS["crossbow"]).convert_alpha(), [self.weapons, self.all_sprites], "crossbow")
-                    case "staff": Weapon((obj.x, obj.y), pygame.image.load(PATHS["staff"]).convert_alpha(), [self.weapons, self.all_sprites], "staff")
-                    case "hacha": Weapon((obj.x, obj.y), pygame.image.load(PATHS["hacha"]).convert_alpha(), [self.weapons, self.all_sprites], "hacha")
-                    case "spear": Weapon((obj.x, obj.y), pygame.image.load(PATHS["spear"]).convert_alpha(), [self.weapons, self.all_sprites], "spear")
-
-    def setup_enemy(self, w1, w2):
-        for obj in self.tmx_map.get_layer_by_name("enemy"):
-            if (WINDOW_WIDTH * w1) < obj.x < (WINDOW_WIDTH * w2):
-                match obj.name:
-                    case "Humano1": path = PATHS["humano1"]
-                    case "Humano2": path = PATHS["humano2"]
-                    case "Momia": path = PATHS["momia"]
-                    case "Zombie1": path = PATHS["zombie1"]
-                    case "Zombie2": path = PATHS["zombie2"]
-                    case "Esqueleto": path = PATHS["humano1"]
-                match random.randint(0, 3):
-                    case 0 :
-                        self.monster = MonsterCrossBow(
-                            pos=(obj.x, obj.y),
-                            groups=[self.all_sprites, self.enemy],
-                            path=path+"crossbow.png",
-                            collision_sprites=self.colliders,
-                            create_bullet=self.create_arrow,
-                            health = 5,
-                            player=self.player,
-                            shot_speed=1000,
-                            animations=CROSSBOW_ANIMATIONS
-                        )
-                        health = 5
-                    case 1 :
-                        self.monster = MonsterSword(
-                            pos=(obj.x, obj.y),
-                            groups=[self.all_sprites, self.enemy],
-                            path=path+"sword.png",
-                            collision_sprites=self.colliders,
-                            health = 10,
-                            player=self.player,
-                            shot_speed=500,
-                            animations=SWORD_ANIMATIONS
-                        )
-                        health = 10
-                    case 2 :
-                        self.monster = MonsterBow(
-                            pos=(obj.x, obj.y),
-                            groups=[self.all_sprites, self.enemy],
-                            path=path+"bow.png",
-                            collision_sprites=self.colliders,
-                            create_bullet=self.create_arrow,
-                            health = 5,
-                            player=self.player,
-                            shot_speed=1000,
-                            animations=BOW_ANIMATIONS
-                        )
-                        health = 5
-                    case 3 :
-                        self.monster = MonsterStaff(
-                            pos=(obj.x, obj.y),
-                            groups=[self.all_sprites, self.enemy],
-                            path=path+"magicStaff.png",
-                            collision_sprites=self.colliders,
-                            create_bullet=self.create_fireball,
-                            health = 5,
-                            player=self.player,
-                            shot_speed=1000,
-                            animations=MAGIC_ANIMATIONS
-                        )
-                        health = 5
-                w = self.monster.image.get_size()[0]
-                h = self.monster.image.get_size()[1]
-                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, health, self.healthBar)
+                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 20, self.healthBar)
                 self.monster.attach(healthBar)
                 self.monster.healthBar = healthBar
 
