@@ -8,6 +8,8 @@ from zones import *
 from utilities import *
 from healthBar import *
 from monster import *
+from button import *
+from mainmenu import *
 
 class Director():
     def __init__(self):
@@ -54,6 +56,10 @@ class Director():
                     if event.type == pygame.QUIT:
                         pygame.quit()
                         sys.exit()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if RETURN_BUTTON.checkForInput(MENU_MOUSE_POS):
+                            director = Director()
+                            main_menu(director)
 
                 self.display_surface.fill("black")
                 self.all_sprites.custom_draw()
@@ -63,6 +69,11 @@ class Director():
                 self.display_surface.blit(fill_surface, (0,0))
                 font = ResourceManager.load('font', type='font')
                 text_surf = font.render("DEFEAT", True, (255,255,255))
+                RETURN_BUTTON = Button(image=None, pos=(400, 500), 
+                            text_input="VOLVER", font=ResourceManager.load('font', type='font', fontsize=20), base_color="#ffffff", hovering_color="gray")
+                MENU_MOUSE_POS = pygame.mouse.get_pos()
+                RETURN_BUTTON.changeColor(MENU_MOUSE_POS)
+                RETURN_BUTTON.update(self.display_surface)
                 self.display_surface.blit(text_surf,(int(WINDOW_WIDTH/2)-100,int(WINDOW_HEIGHT/2)-20))
             else:
                 # event loop
