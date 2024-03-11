@@ -6,6 +6,7 @@ PATHS = {
     "player": "graphics/player/spritesPlayer.png",
     "arrow": "graphics/weapon/arrow2.png",
     "font": "graphics/other/subatomic.ttf",
+    "menufont": "graphics/other/font.ttf",
     "background": "graphics/other/tumba.png",
     "bullet": "graphics/weapon/bullet.png",
     "fireball": "graphics/weapon/fireball.png",
@@ -34,6 +35,9 @@ PATHS = {
     "latigoP": "graphics/Personaje/latigo.png",
     "crossbowP": "graphics/Personaje/crossbow.png",
     "hachaP": "graphics/Personaje/axe.png",
+    "playbutton": "graphics/other/PlayButton.png",
+    "quitbutton": "graphics/other/QuitButton.png",
+    "menuBG": "graphics/other/MenuBackground.png",
 
 
 }

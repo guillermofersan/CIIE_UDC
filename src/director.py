@@ -15,7 +15,7 @@ class Director():
         self.end_zone = False
 
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-        pygame.display.set_caption("demo")
+        pygame.display.set_caption("Los Secretos de FICrol")
         self.clock = pygame.time.Clock()
 
         arrow_surf = ResourceManager.load('arrow')
