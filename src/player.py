@@ -169,7 +169,7 @@ class Player(Entity):
                         case "down":
                             bullet_offset[0] = bullet_offset[0]-5
                             bullet_offset[1] = bullet_offset[1]+5
-                    self.create_magic(bullet_offset, self.bullet_dir, self.status)
+                    self.create_magic(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
                     self.is_shooting = True
             case "hacha":
                 if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":

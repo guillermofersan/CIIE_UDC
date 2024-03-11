@@ -18,10 +18,8 @@ class Director:
 
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Los Secretos de FICrol")
-        self.clock = pygame.time.Clock()
 
         self.tmx_map = ResourceManager.load('map', type='map')
-        self.zona_actual = 1
 
         # groups
         self.all_sprites = AllSprites()
@@ -35,6 +33,7 @@ class Director:
         self.scroll = False
 
     def run(self):
+        self.clock = pygame.time.Clock()
         self.level_setup()
         while self.current_zone != None:
             self.current_zone.setup()
@@ -63,7 +62,7 @@ class Director:
                 fill_surface.fill(fill_color)
                 self.display_surface.blit(fill_surface, (0,0))
                 font = ResourceManager.load('font', type='font')
-                text_surf = font.render("DEFEAT", True, (255,255,255))
+                text_surf = font.render("DERROTA", True, (255,255,255))
                 RETURN_BUTTON = Button(image=None, pos=(400, 500), 
                             text_input="VOLVER", font=ResourceManager.load('font', type='font', fontsize=20), base_color="#ffffff", hovering_color="gray")
                 MENU_MOUSE_POS = pygame.mouse.get_pos()
