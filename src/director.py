@@ -54,7 +54,7 @@ class Director:
                         if RETURN_BUTTON.checkForInput(MENU_MOUSE_POS):
                             director = Director()
                             main_menu(director)
-
+                pygame.mixer.quit()
                 self.display_surface.fill("black")
                 self.all_sprites.custom_draw()
                 fill_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)

@@ -2,12 +2,20 @@ import pygame, sys
 from button import *
 from resources import *
 
+
+
 def main_menu(director):
+    pygame.mixer.init()
+    pygame.mixer.music.load("graphics/other/8bit.mp3")
+    pygame.mixer.music.play(-1,0.0) 
+    BG = ResourceManager.load('menuBG', type='image')
     while True:
-        BG = ResourceManager.load('menuBG', type='image')
+        
         director.display_surface.blit(BG, (0, 0))
 
         MENU_MOUSE_POS = pygame.mouse.get_pos()
+        
+        
 
         PLAY_BUTTON = Button(image=ResourceManager.load('playbutton', type='image'), pos=(400, 520), 
                             text_input="JUGAR", font=ResourceManager.load('menufont', type='font', fontsize=70), base_color="#7500A5", hovering_color="Purple")

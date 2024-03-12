@@ -59,6 +59,9 @@ class Zone1(Zone):
         super().__init__(director, 0, WINDOW_WIDTH)
 
     def setup(self): 
+        pygame.mixer.music.load("graphics/other/cementerio.mp3")
+        pygame.mixer.music.play(-1,0.0) 
+
         self.setup_enemy()
         self.setup_weapons()
 
