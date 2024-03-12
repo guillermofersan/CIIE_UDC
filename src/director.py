@@ -42,6 +42,7 @@ class Director:
 
     def loop(self):
         self.end_zone = False
+        sound_death = False
         pygame.event.clear()
 
         while not self.end_zone:
@@ -54,21 +55,28 @@ class Director:
                         if RETURN_BUTTON.checkForInput(MENU_MOUSE_POS):
                             director = Director()
                             main_menu(director)
-                pygame.mixer.quit()
+                if not sound_death:
+                    pygame.mixer.music.load("audio/death.mp3")
+                    pygame.mixer.music.play(0,0.0)
+                    sound_death = True
                 self.display_surface.fill("black")
                 self.all_sprites.custom_draw()
                 fill_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
                 fill_color = (0, 0, 0, 120)
                 fill_surface.fill(fill_color)
                 self.display_surface.blit(fill_surface, (0,0))
-                font = ResourceManager.load('font', type='font')
-                text_surf = font.render("DERROTA", True, (255,255,255))
+                
+                font = ResourceManager.load('font', type='font', fontsize=100)
+                defeat_text = font.render("DERROTA", True, "White")
+                defeat_rect = defeat_text.get_rect(center=(400, 400))
+                self.display_surface.blit(defeat_text, defeat_rect)
+                
                 RETURN_BUTTON = Button(image=None, pos=(400, 500), 
                             text_input="VOLVER", font=ResourceManager.load('font', type='font', fontsize=20), base_color="#ffffff", hovering_color="gray")
                 MENU_MOUSE_POS = pygame.mouse.get_pos()
                 RETURN_BUTTON.changeColor(MENU_MOUSE_POS)
                 RETURN_BUTTON.update(self.display_surface)
-                self.display_surface.blit(text_surf,(int(WINDOW_WIDTH/2)-100,int(WINDOW_HEIGHT/2)-20))
+                
             else:
                 # event loop
                 for event in pygame.event.get():
