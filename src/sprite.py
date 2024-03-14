@@ -26,9 +26,23 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Weapon(pygame.sprite.Sprite):
-    def __init__(self, pos, surf, groups, name):
+    def __init__(self, pos, surf, groups, name, price):
         super().__init__(groups)
         self.name = name
+        self.image = surf
+        self.price = price
+        self.rect = self.image.get_rect(center=pos)
+        self.hitbox = self.rect.inflate(0, -self.rect.height / 3)
+
+        self.pos = pygame.math.Vector2(self.rect.center)
+
+    def taken(self):
+        self.kill()
+
+
+class Heart(pygame.sprite.Sprite):
+    def __init__(self, pos, surf, groups):
+        super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_rect(center=pos)
         self.hitbox = self.rect.inflate(0, -self.rect.height / 3)

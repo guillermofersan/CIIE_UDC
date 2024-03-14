@@ -39,6 +39,9 @@ PATHS = {
     "quitbutton": "graphics/other/QuitButton.png",
     "menuBG": "graphics/other/MenuBackground.png",
     "carta": "graphics/other/carta.png",
+    "heart": "graphics/other/heart.png",
+    "coin": "graphics/other/coin.png",
+
 }
 
 

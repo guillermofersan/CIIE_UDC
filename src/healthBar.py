@@ -2,6 +2,7 @@
 import pygame
 from pytmx.util_pygame import load_pygame
 from observer import Observer, Subject
+from resources import *
 
 class HealthBar(Observer, pygame.sprite.Sprite):
     def __init__(self, x, y, w, h, maxHp, groups) -> None:

@@ -28,6 +28,8 @@ class Director:
         self.enemy = pygame.sprite.Group()
         self.healthBar = pygame.sprite.Group()
         self.weapons = pygame.sprite.Group()
+        self.hearts = pygame.sprite.Group()
+        self.coins = pygame.sprite.Group()
 
         self.player_death = False
         self.scroll = False
@@ -109,6 +111,12 @@ class Director:
 
                 for bar in self.healthBar:
                     bar.draw(self.display_surface, self.all_sprites.internal_offset.x)
+                
+                font = ResourceManager.load('font', type='font', fontsize=15)
+                defeat_text = font.render("x"+str(self.player.money), True, "White")
+                defeat_rect = defeat_text.get_rect(center=(30, 8))
+                self.display_surface.blit(defeat_text, defeat_rect)
+                self.display_surface.blit(ResourceManager.load("coin"), (0, 0))
 
             pygame.display.update()
 
@@ -139,7 +147,9 @@ class Director:
                     animations=CROSSBOW_ANIMATIONS,
                     weapon_sprites=self.weapons,
                     enemies=self.enemy,
-                    bullet_groups=self.get_bullet_groups()
+                    bullet_groups=self.get_bullet_groups(),
+                    hearts=self.hearts,
+                    coins=self.coins
                 )
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)

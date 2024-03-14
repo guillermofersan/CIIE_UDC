@@ -6,7 +6,7 @@ from settings import *
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups):
+    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups, hearts, coins):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
         self.death = death
         self.is_shooting = False
@@ -18,6 +18,9 @@ class Player(Entity):
         self.weapon_sprites = weapon_sprites
         self.enemies = enemies
         self.bullet_groups = bullet_groups
+        self.hearts = hearts
+        self.coins = coins
+        self.money = 0
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -91,8 +94,10 @@ class Player(Entity):
                         self.frame_index = 0 
             if keys[pygame.K_e]:
                 for sprite in self.weapon_sprites:
-                    if sprite.hitbox.colliderect(self.hitbox):
+                    if sprite.hitbox.colliderect(self.hitbox) and self.money >= sprite.price:
                         self.changeWeapon(sprite.name)
+                        self.money-=sprite.price
+                        sprite.kill()
 
 
 
@@ -198,6 +203,19 @@ class Player(Entity):
              or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2)
             and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
             self.start_scroll()
+
+        for heart in self.hearts.sprites():
+            if heart.hitbox.colliderect(self.hitbox):
+                if self.health < self.maxHealth:
+                    self.health+=1
+                self.notify()
+                heart.kill()
+
+        for coin in self.coins.sprites():
+            if coin.hitbox.colliderect(self.hitbox):
+                self.money +=1
+                self.notify()
+                coin.kill()
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":

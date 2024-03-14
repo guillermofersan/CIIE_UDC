@@ -36,6 +36,7 @@ class Entity(pygame.sprite.Sprite, Subject):
         self.is_attacking = False
 
         self.health = health
+        self.maxHealth = health
         self.is_vulnerable = True
         self.hit_time = None
 

@@ -21,7 +21,7 @@ class Zone(Observer):
     def setup_weapons(self):
         for obj in self.director.get_map_layer("weapon"):
             if self.is_in_zone(obj):
-                Weapon((obj.x, obj.y), ResourceManager.load(obj.name), [self.director.weapons, self.director.all_sprites], obj.name)
+                Weapon((obj.x, obj.y), ResourceManager.load(obj.name), [self.director.weapons, self.director.all_sprites], obj.name, 1)
 
     def setup_enemy(self):
         for obj in self.director.get_map_layer("enemy"):
@@ -50,9 +50,18 @@ class Zone(Observer):
                 monster.healthBar = healthBar
                 self.enemy_counter += 1
 
+    def spawnHeart(self, pos):
+        Heart(pos, ResourceManager.load("heart"), [self.director.all_sprites, self.director.hearts])
+
+    def spawnCoin(self, pos):
+        Heart(pos, ResourceManager.load("coin"), [self.director.all_sprites, self.director.coins])
+
     def update(self, subject: Subject) -> None:
         if (subject.health <= 0):
             self.enemy_counter -= 1
+            self.spawnCoin(subject.pos)
+            if random.randint(1,10) <11:
+                self.spawnHeart(subject.pos+(20, 0))
 
 class Zone1(Zone):
     def __init__(self, director):
