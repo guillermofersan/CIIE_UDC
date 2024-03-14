@@ -261,7 +261,9 @@ class Director:
                         animations=CROSSBOW_ANIMATIONS,
                         weapon_sprites=self.weapons,
                         enemies=self.enemy,
-                        bullet_groups=self.get_bullet_groups()
+                        bullet_groups=self.get_bullet_groups(),
+                        hearts=self.hearts,
+                        coins=self.coins
                     )
 
                     new_list.append(self.player)
