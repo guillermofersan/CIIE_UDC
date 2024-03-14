@@ -19,7 +19,7 @@ class Director:
         self.display_surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
         pygame.display.set_caption("Los Secretos de FICrol")
 
-        self.tmx_map = ResourceManager.load('map', type='map')
+        self.tmx_map = ResourceManager.load('bosque', type='map')
 
         # groups
         self.all_sprites = AllSprites()
@@ -32,9 +32,11 @@ class Director:
         self.player_death = False
         self.scroll = False
 
+        self.spriteList = []
+
     def run(self):
         self.clock = pygame.time.Clock()
-        self.level_setup()
+        self.bosque_setup()
         while self.current_zone != None:
             self.current_zone.setup()
             self.loop()
@@ -60,7 +62,7 @@ class Director:
                     pygame.mixer.music.play(0,0.0)
                     sound_death = True
                 self.display_surface.fill("black")
-                self.all_sprites.custom_draw()
+                self.all_sprites.shop_draw(self.spriteList, self.bullets)
                 fill_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
                 fill_color = (0, 0, 0, 120)
                 fill_surface.fill(fill_color)
@@ -105,7 +107,7 @@ class Director:
 
                 # draw groups
                 self.display_surface.fill("black")
-                self.all_sprites.custom_draw()
+                self.all_sprites.shop_draw(self.spriteList, self.bullets)
 
                 for bar in self.healthBar:
                     bar.draw(self.display_surface, self.all_sprites.internal_offset.x)
@@ -119,6 +121,7 @@ class Director:
         self.block = []
         for x, y, surf in self.get_map_layer("bloqueo").tiles():
             self.block.append(Sprite((x * 16, y * 16), surf, self.all_sprites))
+            
 
         for x, y, surf in self.get_map_layer("objetos").tiles():
             Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
@@ -144,7 +147,122 @@ class Director:
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
                 self.player.healthBar = healthBar
-    
+
+    def shop_setup(self):
+            
+            new_list = []
+            for x, y, surf in self.get_map_layer("Fondo").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+            
+            new_list = []
+            for x, y, surf in self.get_map_layer("Base").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Colisionables").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            self.block = []
+
+            new_list = []
+            for obj in self.get_map_layer("player"):
+                if obj.name == "Player":
+                    self.player = Player(
+                        pos=(obj.x, obj.y),
+                        groups=self.all_sprites,
+                        path=PATHS["player"],
+                        collision_sprites=self.colliders,
+                        health = 10,
+                        death = self.death,
+                        start_scroll = self.start_scroll,
+                        animations=CROSSBOW_ANIMATIONS,
+                        weapon_sprites=self.weapons,
+                        enemies=self.enemy,
+                        bullet_groups=self.get_bullet_groups()
+                    )
+
+                    new_list.append(self.player)
+                    
+                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
+                    self.player.attach(healthBar)
+                    self.player.healthBar = healthBar
+
+            self.spriteList.append(new_list)
+
+    def bosque_setup(self):
+            
+            # new_list = []
+            # for x, y, surf in self.get_map_layer("Fondo").tiles():
+            #     sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+            #     new_list.append(sprite)
+            # self.spriteList.append(new_list)
+            
+            new_list = []
+            for x, y, surf in self.get_map_layer("Hierba").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Coli_3").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Coli_1").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Puertas").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Acc_agua").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            self.block = []
+
+            new_list = []
+            for obj in self.get_map_layer("player"):
+                if obj.name == "Player":
+                    self.player = Player(
+                        pos=(obj.x, obj.y),
+                        groups=self.all_sprites,
+                        path=PATHS["player"],
+                        collision_sprites=self.colliders,
+                        health = 10,
+                        death = self.death,
+                        start_scroll = self.start_scroll,
+                        animations=CROSSBOW_ANIMATIONS,
+                        weapon_sprites=self.weapons,
+                        enemies=self.enemy,
+                        bullet_groups=self.get_bullet_groups()
+                    )
+
+                    new_list.append(self.player)
+                    
+                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
+                    self.player.attach(healthBar)
+                    self.player.healthBar = healthBar
+
+            self.spriteList.append(new_list)
+
+
     def death(self):
         self.player_death = True
 
@@ -220,10 +338,11 @@ class AllSprites(pygame.sprite.Group):
         self.internal_surf_size = pygame.math.Vector2(self.bg_size * self.tile_size, self.bg_size * self.tile_size)
         self.internal_surf = pygame.Surface(self.internal_surf_size, pygame.SRCALPHA)
         self.internal_offset = pygame.math.Vector2(0,0)
-        self.bg_surf = ResourceManager.load('background')
+        #self.bg_surf = ResourceManager.load('background')
+        self.bg_surf = ResourceManager.load('background_bosque')
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
 
-    def custom_draw(self):
+    def custom_draw(self, list):
         self.internal_surf.fill("black")
 
         bg_offset = self.bg_rect.topleft + self.internal_offset
@@ -238,3 +357,26 @@ class AllSprites(pygame.sprite.Group):
         scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
 
         self.display_surface.blit(scaled_surf, scaled_rect)
+
+    def shop_draw(self, list, bullets):
+        self.internal_surf.fill("black")
+
+        bg_offset = self.bg_rect.topleft + self.internal_offset
+        self.internal_surf.blit(self.bg_surf, bg_offset)
+
+        # active elements
+        for layer in list:
+            for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
+                if sprite in layer:
+                    offset_pos = sprite.rect.topleft + self.internal_offset
+                    self.internal_surf.blit(sprite.image, offset_pos)
+
+        for sprite in bullets:
+            offset_pos = sprite.rect.topleft + self.internal_offset
+            self.internal_surf.blit(sprite.image, offset_pos)
+
+        scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surf_size * self.zoom_scale)
+        scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
+
+        self.display_surface.blit(scaled_surf, scaled_rect)
+
