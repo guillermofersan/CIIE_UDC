@@ -11,7 +11,7 @@ PATHS = {
     "background_bosque": "graphics/other/bosque.png",
     "bullet": "graphics/weapon/bullet.png",
     "fireball": "graphics/weapon/fireball.png",
-    "map": "data/tumba.tmx",
+    "tumba": "data/tumba.tmx",
     "tienda": "data/tienda.tmx",
     "bosque": "data/bosque.tmx",
     "esqueleto": "graphics/esqueleto/",

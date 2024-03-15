@@ -4,6 +4,7 @@ from entity import Entity
 from os import walk
 from healthBar import HealthBar
 from settings import *
+from settings import PATHS
 from sprite import *
 
 class Enemy:
@@ -126,6 +127,7 @@ class Monster(Entity, Enemy):
 
 class MonsterCrossBow(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        print(name)
         path = PATHS[name] + "crossbow.png"
         health = 5
         shot_speed = 1000
@@ -171,6 +173,7 @@ class MonsterCrossBow(Monster, Distance):
 
 class MonsterBow(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        print(name)
         path = PATHS[name] + "bow.png"
         health = 5
         shot_speed = 1000
@@ -216,6 +219,7 @@ class MonsterBow(Monster, Distance):
 
 class MonsterStaff(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
+        print(name)
         path = PATHS[name] + "magicStaff.png"
         health = 5
         shot_speed = 1000
@@ -263,6 +267,7 @@ class MonsterStaff(Monster, Distance):
 
 class MonsterSword(Monster, Melee):
     def __init__(self, pos, groups, name, collision_sprites, player):
+        print(name)
         path = PATHS[name] + "sword.png"
         health = 10
         shot_speed = 500
@@ -292,6 +297,7 @@ class MonsterSword(Monster, Melee):
 
 class MonsterBoss(Monster, Melee):
     def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
+        
         super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
 
         self.attack_radius = 100

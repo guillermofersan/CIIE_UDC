@@ -200,7 +200,8 @@ class Player(Entity):
 
     def collision(self, dir):
         if ((WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH
-             or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2)
+             or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2
+             or WINDOW_WIDTH * 3 - 80 < self.pos.x < WINDOW_WIDTH * 3)
             and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
             self.start_scroll()
 
