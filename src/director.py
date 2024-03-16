@@ -47,6 +47,7 @@ class Director:
             self.loop()
             self.current_zone = self.current_zone.next_zone()
         
+        
         self.reset('tienda')
 
         self.shop_setup()
@@ -66,6 +67,16 @@ class Director:
             self.loop()
             self.current_zone = self.current_zone.next_zone()
 
+        self.reset('tienda')
+
+        self.shop_setup()
+        self.current_zone = Zone3(self)
+
+        while self.current_zone != None:
+            self.current_zone.setup()
+            self.loop()
+            self.current_zone = self.current_zone.next_zone()
+
         self.reset('tumba')
 
         self.level_setup()
@@ -77,6 +88,7 @@ class Director:
 
 
     def reset(self, map):
+
 
         for sprite in self.all_sprites:
             sprite.kill()
@@ -94,6 +106,9 @@ class Director:
         self.enemy = pygame.sprite.Group()
         self.healthBar = pygame.sprite.Group()
         self.weapons = pygame.sprite.Group()
+        self.coins = pygame.sprite.Group()
+        self.coins = temp
+        
 
         self.player_death = False
         self.scroll = False

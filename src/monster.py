@@ -127,7 +127,6 @@ class Monster(Entity, Enemy):
 
 class MonsterCrossBow(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
-        print(name)
         path = PATHS[name] + "crossbow.png"
         health = 5
         shot_speed = 1000
@@ -173,7 +172,6 @@ class MonsterCrossBow(Monster, Distance):
 
 class MonsterBow(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
-        print(name)
         path = PATHS[name] + "bow.png"
         health = 5
         shot_speed = 1000
@@ -219,7 +217,6 @@ class MonsterBow(Monster, Distance):
 
 class MonsterStaff(Monster, Distance):
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
-        print(name)
         path = PATHS[name] + "magicStaff.png"
         health = 5
         shot_speed = 1000
@@ -267,7 +264,6 @@ class MonsterStaff(Monster, Distance):
 
 class MonsterSword(Monster, Melee):
     def __init__(self, pos, groups, name, collision_sprites, player):
-        print(name)
         path = PATHS[name] + "sword.png"
         health = 10
         shot_speed = 500
@@ -325,6 +321,5 @@ class MonsterBoss(Monster, Melee):
     def check_death(self):
         if not self.transformation and self.health < (self.maxHealth/2):
             self.transformation = True
-            print("ouch")
             self.changeSprite(PATHS["bossH"], AXE_ANIMATIONS)
         super().check_death()
