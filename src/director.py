@@ -49,9 +49,11 @@ class Director:
         
         
         self.reset('tienda')
-
+        
         self.shop_setup()
+        
         self.current_zone = Zone3(self)
+        
 
         while self.current_zone != None:
             self.current_zone.setup()
@@ -89,7 +91,6 @@ class Director:
 
     def reset(self, map):
 
-
         for sprite in self.all_sprites:
             sprite.kill()
             self.all_sprites.remove(sprite)
@@ -107,7 +108,6 @@ class Director:
         self.healthBar = pygame.sprite.Group()
         self.weapons = pygame.sprite.Group()
         self.coins = pygame.sprite.Group()
-        #self.coins = 5
         
 
         self.player_death = False
@@ -195,6 +195,9 @@ class Director:
             pygame.display.update()
 
     def level_setup(self):
+        temp = self.player.money
+        temp2 = self.player.weapon
+        temp3 = ANIMATIONS[temp2]
         
         self.block = []
 
@@ -234,12 +237,14 @@ class Director:
                     health = 10,
                     death = self.death,
                     start_scroll = self.start_scroll,
-                    animations=CROSSBOW_ANIMATIONS,
+                    animations=temp3,
                     weapon_sprites=self.weapons,
                     enemies=self.enemy,
                     bullet_groups=self.get_bullet_groups(),
                     hearts=self.hearts,
-                    coins=self.coins
+                    coins=self.coins,
+                    money=temp,
+                    weapon = temp2
                 )
 
                 new_list.append(self.player)
@@ -254,7 +259,9 @@ class Director:
         self.spriteList.append(new_list)
 
     def shop_setup(self):
-        
+        temp = self.player.money
+        temp2 = self.player.weapon
+        temp3 = ANIMATIONS[temp2]
         self.block = []
 
         new_list = []
@@ -288,12 +295,14 @@ class Director:
                     health = 10,
                     death = self.death,
                     start_scroll = self.start_scroll,
-                    animations=CROSSBOW_ANIMATIONS,
+                    animations=temp3,
                     weapon_sprites=self.weapons,
                     enemies=self.enemy,
                     bullet_groups=self.get_bullet_groups(),
                     hearts=self.hearts,
-                    coins=self.coins
+                    coins=self.coins,
+                    money=temp,
+                    weapon = temp2
                 )
 
                 new_list.append(self.player)
@@ -305,12 +314,9 @@ class Director:
         self.spriteList.append(new_list)
 
     def bosque_setup(self):
-            
-            # new_list = []
-            # for x, y, surf in self.get_map_layer("Fondo").tiles():
-            #     sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            #     new_list.append(sprite)
-            # self.spriteList.append(new_list)
+            temp = 0
+            temp2 = "crossbow"
+            temp3 = ANIMATIONS[temp2]
             
             new_list = []
             for x, y, surf in self.get_map_layer("Hierba").tiles():
@@ -355,12 +361,14 @@ class Director:
                         health = 10,
                         death = self.death,
                         start_scroll = self.start_scroll,
-                        animations=CROSSBOW_ANIMATIONS,
+                        animations=temp3,
                         weapon_sprites=self.weapons,
                         enemies=self.enemy,
                         bullet_groups=self.get_bullet_groups(),
                         hearts=self.hearts,
-                        coins=self.coins
+                        coins=self.coins,
+                        money=temp,
+                        weapon = temp2
                     )
 
                     new_list.append(self.player)
@@ -374,13 +382,11 @@ class Director:
             self.spriteList.append(new_list)
     
     def pueblo_setup(self):
-            
-            
-            # new_list = []
-            # for x, y, surf in self.get_map_layer("Base").tiles():
-            #     sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            #     new_list.append(sprite)
-            # self.spriteList.append(new_list)
+            temp = self.player.money
+            temp2 = self.player.weapon
+            temp3 = ANIMATIONS[temp2]
+
+            print(temp3)
 
             new_list = []
             for x, y, surf in self.get_map_layer("Segunda base").tiles():
@@ -408,12 +414,14 @@ class Director:
                         health = 10,
                         death = self.death,
                         start_scroll = self.start_scroll,
-                        animations=CROSSBOW_ANIMATIONS,
+                        animations=temp3,
                         weapon_sprites=self.weapons,
                         enemies=self.enemy,
                         bullet_groups=self.get_bullet_groups(),
                         hearts=self.hearts,
-                        coins=self.coins
+                        coins=self.coins,
+                        money=temp,
+                        weapon = temp2
                     )
 
                     new_list.append(self.player)

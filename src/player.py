@@ -6,7 +6,7 @@ from settings import *
 
 class Player(Entity):
 
-    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups, hearts, coins):
+    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups, hearts, coins, money, weapon):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
         self.death = death
         self.is_shooting = False
@@ -14,13 +14,13 @@ class Player(Entity):
         self.create_magic = self.create_fireball
         self.start_scroll = start_scroll
         self.healthBar = None
-        self.weapon = "crossbow"
+        self.weapon = weapon
         self.weapon_sprites = weapon_sprites
         self.enemies = enemies
         self.bullet_groups = bullet_groups
         self.hearts = hearts
         self.coins = coins
-        self.money = 0
+        self.money = money
 
     def input(self):
         keys = pygame.key.get_pressed()
