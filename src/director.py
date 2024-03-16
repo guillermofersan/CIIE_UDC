@@ -236,7 +236,7 @@ class Director:
                 self.player = Player(
                     pos=(obj.x, obj.y),
                     groups=self.all_sprites,
-                    path=PATHS["player"],
+                    path=PATHS[temp2+"P"],
                     collision_sprites=self.colliders,
                     health = 10,
                     death = self.death,
@@ -295,7 +295,7 @@ class Director:
                 self.player = Player(
                     pos=(obj.x, obj.y),
                     groups=self.all_sprites,
-                    path=PATHS["player"],
+                    path=PATHS[temp2+"P"],
                     collision_sprites=self.colliders,
                     health = 10,
                     death = self.death,
@@ -361,7 +361,7 @@ class Director:
                     self.player = Player(
                         pos=(obj.x, obj.y),
                         groups=self.all_sprites,
-                        path=PATHS["player"],
+                        path=PATHS[temp2+"P"],
                         collision_sprites=self.colliders,
                         health = 10,
                         death = self.death,
@@ -413,7 +413,7 @@ class Director:
                     self.player = Player(
                         pos=(obj.x, obj.y),
                         groups=self.all_sprites,
-                        path=PATHS["player"],
+                        path=PATHS[temp2+"P"],
                         collision_sprites=self.colliders,
                         health = 10,
                         death = self.death,
