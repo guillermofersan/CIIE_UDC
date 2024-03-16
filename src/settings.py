@@ -14,6 +14,7 @@ PATHS = {
     "tumba": "data/tumba.tmx",
     "tienda": "data/tienda.tmx",
     "bosque": "data/bosque.tmx",
+    "pueblo": "data/pueblo.tmx",
     "esqueleto": "graphics/esqueleto/",
     "humano1": "graphics/humano1/",
     "humano2": "graphics/humano2/",

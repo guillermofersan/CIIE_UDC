@@ -57,6 +57,15 @@ class Director:
             self.loop()
             self.current_zone = self.current_zone.next_zone()
 
+        self.reset('pueblo')
+
+        self.pueblo_setup()
+
+        while self.current_zone != None:
+            self.current_zone.setup()
+            self.loop()
+            self.current_zone = self.current_zone.next_zone()
+
         self.reset('tumba')
 
         self.level_setup()
@@ -346,6 +355,57 @@ class Director:
                     self.player.healthBar = healthBar
 
             self.spriteList.append(new_list)
+    
+    def pueblo_setup(self):
+            
+            
+            # new_list = []
+            # for x, y, surf in self.get_map_layer("Base").tiles():
+            #     sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+            #     new_list.append(sprite)
+            # self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Segunda base").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+            new_list = []
+            for x, y, surf in self.get_map_layer("Coli").tiles():
+                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+                new_list.append(sprite)
+            self.spriteList.append(new_list)
+
+
+            self.block = []
+
+            new_list = []
+            for obj in self.get_map_layer("player"):
+                if obj.name == "Player":
+                    self.player = Player(
+                        pos=(obj.x, obj.y),
+                        groups=self.all_sprites,
+                        path=PATHS["player"],
+                        collision_sprites=self.colliders,
+                        health = 10,
+                        death = self.death,
+                        start_scroll = self.start_scroll,
+                        animations=CROSSBOW_ANIMATIONS,
+                        weapon_sprites=self.weapons,
+                        enemies=self.enemy,
+                        bullet_groups=self.get_bullet_groups(),
+                        hearts=self.hearts,
+                        coins=self.coins
+                    )
+
+                    new_list.append(self.player)
+                    
+                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
+                    self.player.attach(healthBar)
+                    self.player.healthBar = healthBar
+
+            self.spriteList.append(new_list)
 
 
     def death(self):
@@ -428,6 +488,7 @@ class AllSprites(pygame.sprite.Group):
             case 'bosque': self.bg_surf = ResourceManager.load('background_bosque')
             case 'tienda': self.bg_surf = ResourceManager.load('background_bosque')
             case 'tumba': self.bg_surf = ResourceManager.load('background')
+            case 'pueblo': self.bg_surf = ResourceManager.load('background_bosque')
             
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
 
