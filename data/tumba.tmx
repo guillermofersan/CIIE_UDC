@@ -366,30 +366,5 @@
    <point/>
   </object>
  </objectgroup>
- <objectgroup id="12" name="weapon">
-  <object id="24" name="sword" x="76" y="493">
-   <point/>
-  </object>
-  <object id="25" name="latigo" x="128" y="490">
-   <point/>
-  </object>
-  <object id="26" name="mace" x="189" y="489">
-   <point/>
-  </object>
-  <object id="27" name="bow" x="247" y="487">
-   <point/>
-  </object>
-  <object id="28" name="crossbow" x="79" y="560">
-   <point/>
-  </object>
-  <object id="29" name="staff" x="139" y="557">
-   <point/>
-  </object>
-  <object id="30" name="hacha" x="246" y="544">
-   <point/>
-  </object>
-  <object id="31" name="spear" x="78" y="609">
-   <point/>
-  </object>
- </objectgroup>
+ <objectgroup id="12" name="weapon"/>
 </map>

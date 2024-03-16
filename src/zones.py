@@ -20,7 +20,7 @@ class Zone(Observer):
     
     def setup_weapons(self):
         for obj in self.director.get_map_layer("weapon"):
-            if self.is_in_zone(obj):
+            # if self.is_in_zone(obj):
                 Weapon((obj.x, obj.y), ResourceManager.load(obj.name), [self.director.weapons, self.director.all_sprites], obj.name, 1)
 
     def setup_enemy(self):
@@ -83,6 +83,7 @@ class Zone2(Zone):
 
     def setup(self):
         self.setup_enemy()
+        self.setup_weapons()
 
     def next_zone(self):
         return Zone3(self.director)
@@ -93,6 +94,7 @@ class Zone3(Zone):
 
     def setup(self):
         self.setup_enemy()
+        self.setup_weapons()
         self.director.load_boss()
 
     def next_zone(self):

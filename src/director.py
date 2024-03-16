@@ -94,8 +94,6 @@ class Director:
         self.enemy = pygame.sprite.Group()
         self.healthBar = pygame.sprite.Group()
         self.weapons = pygame.sprite.Group()
-        self.hearts = pygame.sprite.Group()
-        self.coins = pygame.sprite.Group()
 
         self.player_death = False
         self.scroll = False
@@ -123,7 +121,7 @@ class Director:
                     pygame.mixer.music.play(0,0.0)
                     sound_death = True
                 self.display_surface.fill("black")
-                self.all_sprites.shop_draw(self.spriteList, self.bullets, self.enemy, self.coins, self.hearts)
+                self.all_sprites.shop_draw(self.spriteList, self.bullets, self.enemy, self.coins, self.hearts, self.weapons)
                 fill_surface = pygame.Surface((WINDOW_WIDTH, WINDOW_HEIGHT), pygame.SRCALPHA)
                 fill_color = (0, 0, 0, 120)
                 fill_surface.fill(fill_color)
@@ -168,7 +166,7 @@ class Director:
 
                 # draw groups
                 self.display_surface.fill("black")
-                self.all_sprites.shop_draw(self.spriteList, self.bullets, self.enemy, self.coins, self.hearts)
+                self.all_sprites.shop_draw(self.spriteList, self.bullets, self.enemy, self.coins, self.hearts, self.weapons)
 
                 for bar in self.healthBar:
                     bar.draw(self.display_surface, self.all_sprites.internal_offset.x)
@@ -239,55 +237,55 @@ class Director:
         self.spriteList.append(new_list)
 
     def shop_setup(self):
-            
-            self.block = []
+        
+        self.block = []
 
-            new_list = []
-            for x, y, surf in self.get_map_layer("Fondo").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-            
-            new_list = []
-            for x, y, surf in self.get_map_layer("Base").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
+        new_list = []
+        for x, y, surf in self.get_map_layer("Fondo").tiles():
+            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+            new_list.append(sprite)
+        self.spriteList.append(new_list)
+        
+        new_list = []
+        for x, y, surf in self.get_map_layer("Base").tiles():
+            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
+            new_list.append(sprite)
+        self.spriteList.append(new_list)
 
-            new_list = []
-            for x, y, surf in self.get_map_layer("Colisionables").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
+        new_list = []
+        for x, y, surf in self.get_map_layer("Colisionables").tiles():
+            sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
+            new_list.append(sprite)
+        self.spriteList.append(new_list)
 
 
 
-            new_list = []
-            for obj in self.get_map_layer("player"):
-                if obj.name == "Player":
-                    self.player = Player(
-                        pos=(obj.x, obj.y),
-                        groups=self.all_sprites,
-                        path=PATHS["player"],
-                        collision_sprites=self.colliders,
-                        health = 10,
-                        death = self.death,
-                        start_scroll = self.start_scroll,
-                        animations=CROSSBOW_ANIMATIONS,
-                        weapon_sprites=self.weapons,
-                        enemies=self.enemy,
-                        bullet_groups=self.get_bullet_groups(),
-                        hearts=self.hearts,
-                        coins=self.coins
-                    )
+        new_list = []
+        for obj in self.get_map_layer("player"):
+            if obj.name == "Player":
+                self.player = Player(
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS["player"],
+                    collision_sprites=self.colliders,
+                    health = 10,
+                    death = self.death,
+                    start_scroll = self.start_scroll,
+                    animations=CROSSBOW_ANIMATIONS,
+                    weapon_sprites=self.weapons,
+                    enemies=self.enemy,
+                    bullet_groups=self.get_bullet_groups(),
+                    hearts=self.hearts,
+                    coins=self.coins
+                )
 
-                    new_list.append(self.player)
-                    
-                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
-                    self.player.attach(healthBar)
-                    self.player.healthBar = healthBar
+                new_list.append(self.player)
+                
+                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
+                self.player.attach(healthBar)
+                self.player.healthBar = healthBar
 
-            self.spriteList.append(new_list)
+        self.spriteList.append(new_list)
 
     def bosque_setup(self):
             
@@ -508,7 +506,7 @@ class AllSprites(pygame.sprite.Group):
 
     #     self.display_surface.blit(scaled_surf, scaled_rect)
 
-    def shop_draw(self, list, bullets, enemies, coins, hearts):
+    def shop_draw(self, list, bullets, enemies, coins, hearts, weapons):
         self.internal_surf.fill("black")
 
         bg_offset = self.bg_rect.topleft + self.internal_offset
@@ -516,8 +514,6 @@ class AllSprites(pygame.sprite.Group):
 
         # active elements
         for layer in list:
-
-            print(len(layer))
             
             for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
                 if sprite in layer:
@@ -537,6 +533,10 @@ class AllSprites(pygame.sprite.Group):
             self.internal_surf.blit(sprite.image, offset_pos)
 
         for sprite in hearts:
+            offset_pos = sprite.rect.topleft + self.internal_offset
+            self.internal_surf.blit(sprite.image, offset_pos)
+
+        for sprite in weapons:
             offset_pos = sprite.rect.topleft + self.internal_offset
             self.internal_surf.blit(sprite.image, offset_pos)
 
