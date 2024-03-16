@@ -8,6 +8,8 @@ def main_menu(director):
     pygame.mixer.init()
     pygame.mixer.music.load("audio/mainmenu.mp3")
     pygame.mixer.music.play(-1,0.0) 
+    pygame.mixer.music.set_volume(0.1)
+    
     BG = ResourceManager.load('menuBG', type='image')
     while True:
         director.display_surface.blit(BG, (0, 0))

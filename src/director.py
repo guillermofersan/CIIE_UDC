@@ -132,6 +132,7 @@ class Director:
                             director = Director()
                             main_menu(director)
                 if not sound_death:
+                    pygame.mixer.music.unload()
                     pygame.mixer.music.load("audio/death.mp3")
                     pygame.mixer.music.play(0,0.0)
                     sound_death = True
@@ -253,6 +254,7 @@ class Director:
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
                 self.player.healthBar = healthBar
+                pygame.mixer.music.unload()
                 pygame.mixer.music.load("audio/cementerio.mp3")
                 pygame.mixer.music.play(-1,0.0) 
 
@@ -376,6 +378,7 @@ class Director:
                     healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                     self.player.attach(healthBar)
                     self.player.healthBar = healthBar
+                    pygame.mixer.music.unload()
                     pygame.mixer.music.load("audio/bosque.mp3")
                     pygame.mixer.music.play(-1,0.0) 
 
@@ -429,6 +432,7 @@ class Director:
                     healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                     self.player.attach(healthBar)
                     self.player.healthBar = healthBar
+                    pygame.mixer.music.unload()
                     pygame.mixer.music.load("audio/pueblo.mp3")
                     pygame.mixer.music.play(-1,0.0) 
 
