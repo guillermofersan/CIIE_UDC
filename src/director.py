@@ -107,7 +107,7 @@ class Director:
         self.healthBar = pygame.sprite.Group()
         self.weapons = pygame.sprite.Group()
         self.coins = pygame.sprite.Group()
-        self.coins = temp
+        #self.coins = 5
         
 
         self.player_death = False
@@ -248,6 +248,8 @@ class Director:
                 healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                 self.player.attach(healthBar)
                 self.player.healthBar = healthBar
+                pygame.mixer.music.load("audio/cementerio.mp3")
+                pygame.mixer.music.play(-1,0.0) 
 
         self.spriteList.append(new_list)
 
@@ -366,6 +368,8 @@ class Director:
                     healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                     self.player.attach(healthBar)
                     self.player.healthBar = healthBar
+                    pygame.mixer.music.load("audio/bosque.mp3")
+                    pygame.mixer.music.play(-1,0.0) 
 
             self.spriteList.append(new_list)
     
@@ -417,6 +421,8 @@ class Director:
                     healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
                     self.player.attach(healthBar)
                     self.player.healthBar = healthBar
+                    pygame.mixer.music.load("audio/pueblo.mp3")
+                    pygame.mixer.music.play(-1,0.0) 
 
             self.spriteList.append(new_list)
 
