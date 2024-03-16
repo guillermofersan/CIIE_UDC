@@ -10,6 +10,7 @@ from healthBar import *
 from monster import *
 from button import *
 from mainmenu import *
+from victory import *
 
 class Director:
     def __init__(self):
@@ -87,6 +88,8 @@ class Director:
             self.current_zone.setup()
             self.loop()
             self.current_zone = self.current_zone.next_zone()
+            
+        victory(self)
 
 
     def reset(self, map):
