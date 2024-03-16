@@ -392,8 +392,6 @@ class Director:
             temp2 = self.player.weapon
             temp3 = ANIMATIONS[temp2]
 
-            print(temp3)
-
             new_list = []
             for x, y, surf in self.get_map_layer("Segunda base").tiles():
                 sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
