@@ -35,6 +35,7 @@ class Director:
         self.player_death = False
         self.scroll = False
         self.shop = False
+        self.tutorial = True
 
         self.spriteList = []
 
@@ -47,6 +48,7 @@ class Director:
         while self.current_zone != None:
             self.current_zone.setup()
             self.loop()
+            self.tutorial = False
             self.current_zone = self.current_zone.next_zone()
         
         
@@ -199,12 +201,19 @@ class Director:
                 coin_rect = coin_text.get_rect(center=(30, 8))
                 self.display_surface.blit(coin_text, coin_rect)
                 self.display_surface.blit(ResourceManager.load("coin"), (0, 0))
-                if self.shop == True:
+                if self.shop:
                     font = ResourceManager.load('menufont', type='font', fontsize=30)
                     shop_text = font.render("Todo a 5", True, "White")
                     shop_rect = shop_text.get_rect(center=(390, 100))
                     self.display_surface.blit(ResourceManager.load("coin"), (510, 92))
                     self.display_surface.blit(shop_text, shop_rect)
+                    image_tutorial = ResourceManager.load("tutorialtienda")
+                    image_rect = image_tutorial.get_rect(center=(400,730))
+                    self.display_surface.blit(image_tutorial, image_rect)
+                if self.tutorial:
+                    image_tutorial = ResourceManager.load("tutorial")
+                    image_rect = image_tutorial.get_rect(center=(400,700))
+                    self.display_surface.blit(image_tutorial, image_rect)
 
             pygame.display.update()
 
