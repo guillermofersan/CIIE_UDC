@@ -59,9 +59,10 @@ class Zone(Observer):
     def update(self, subject: Subject) -> None:
         if (subject.health <= 0):
             self.enemy_counter -= 1
-            self.spawnCoin(subject.pos)
-            if random.randint(1,10) <11:
+            if random.randint(1,10) <=5:
                 self.spawnHeart(subject.pos+(20, 0))
+            else:
+                self.spawnCoin(subject.pos)
 
 class Zone1(Zone):
     def __init__(self, director):
