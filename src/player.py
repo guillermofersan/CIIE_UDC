@@ -215,7 +215,7 @@ class Player(Entity):
         for heart in self.hearts.sprites():
             if heart.hitbox.colliderect(self.hitbox):
                 if self.health < self.maxHealth:
-                    self.health+=3
+                    self.health = min(self.health + 3, 10)
                 self.notify()
                 heart.kill()
 
