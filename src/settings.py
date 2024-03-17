@@ -47,8 +47,8 @@ PATHS = {
     "coin": "graphics/other/coin.png",
     "victoria": "graphics/other/victoria.png",
     "tutorialtienda": "graphics/other/tiendaTutorial.png",
-    "tutorial": "graphics/other/tutorial.png"
-
+    "tutorial": "graphics/other/tutorial.png",
+    "level_arrow": "graphics/other/level_arrow.png"
 }
 
 MAP_LAYERS = {

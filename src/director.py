@@ -249,13 +249,16 @@ class Director:
                         sys.exit()
                 
                 # Si no hay enemigos
+                level_arrow = None
                 if self.current_zone.enemy_counter == 0:
+                    level_arrow = ResourceManager.load('level_arrow')
                     for obj in self.block:
                         if obj.rect.right <= self.current_zone.right_border:
                             obj.kill()
                             self.all_sprites.remove(obj)
                     # Si se da el caso del scroll, mueve todo hacia el lado correspondiente
                     if self.scroll:
+                        level_arrow = None
                         self.all_sprites.internal_offset.x -= 100
                         if self.all_sprites.internal_offset.x % 800 == 0:
                             self.player.pos.x += 180
@@ -273,6 +276,8 @@ class Director:
                 # Dibujar los grupos
                 self.display_surface.fill("black")
                 self.all_sprites.shop_draw(self.spriteList, self.bullets, self.enemy, self.coins, self.hearts, self.weapons)
+                if level_arrow != None:
+                    self.display_surface.blit(level_arrow, (WINDOW_WIDTH - 135, WINDOW_HEIGHT / 2 - 30))
 
                 # Dibuja todas las barras de vida dentro del grupo de healthBar
                 for bar in self.healthBar:
