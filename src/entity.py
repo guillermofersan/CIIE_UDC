@@ -183,13 +183,13 @@ class Entity(pygame.sprite.Sprite, Subject):
             self.dir = self.dir.normalize()
 
         # Colision horizontal
-        self.pos.x += self.dir.x * self.speed * dt * 2
+        self.pos.x += self.dir.x * self.speed * dt
         self.hitbox.centerx = round(self.pos.x)
         self.rect.centerx = self.hitbox.centerx
         self.collision("horizontal")
 
         # Colision vertical
-        self.pos.y += self.dir.y * self.speed * dt * 2
+        self.pos.y += self.dir.y * self.speed * dt
         self.hitbox.centery = round(self.pos.y)
         self.rect.centery = self.hitbox.centery
         self.collision("vertical")
