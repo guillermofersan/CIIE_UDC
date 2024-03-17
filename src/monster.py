@@ -19,7 +19,7 @@ class Enemy:
 
         """
         
-        
+        Coge la distancia y direccion del monstruo al jugador
 
         """
 
@@ -35,20 +35,34 @@ class Enemy:
         return (distance, direction)
 
     def face_player(self):
+
+        """
+        
+        Cambia el status del enemigo en relacion a la direccion del jugador para caminar hasta el.
+        
+        """
+
         _, direction = self.get_player_distance_direction()
 
         if -0.5 < direction.y < 0.5:
-            if direction.x < 0: # player to the left
+            if direction.x < 0: # Izquierda
                 self.status = 'left_idle'
-            elif direction.x > 0: # player to the right
+            elif direction.x > 0: # Derecha
                 self.status = 'right_idle'
         else:
-            if direction.y < 0: # player to the top
+            if direction.y < 0: # Arriba
                 self.status = 'up_idle'
-            elif direction.y > 0: # player to the bottom
+            elif direction.y > 0: # Abajo
                 self.status = 'down_idle'
 
     def walk_to_player(self):
+
+        """
+        
+        Coge la direccion del jugador y camina hacia el
+        
+        """
+
         distance, direction = self.get_player_distance_direction()
         if self.attack_radius < distance:
             self.dir = direction
@@ -58,7 +72,15 @@ class Enemy:
 
 
 class Melee:
+
+    """
+    
+    Define el ataque a mele de los monstruos
+
+    """
+
     def attack(self):
+        # Comprueba si puede atacar (distancia o ya estar atacando), y si ataca, cambia su estatus
         distance = self.get_player_distance_direction()[0]
         if distance < self.attack_radius and not self.is_attacking:
             self.is_attacking = True
@@ -69,7 +91,15 @@ class Melee:
 
 
 class Distance:
+
+    """
+    
+    Define el ataque de rango  de los monstruos
+
+    """
+
     def attack(self):
+        # Comprueba si puede atacar (distancia, velocidad de ataque, o ya estar atacando) , y si ataca, cambia su estatus
         distance = self.get_player_distance_direction()[0]
         if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
             self.is_attacking = True
@@ -81,6 +111,13 @@ class Distance:
 
 
 class Monster(Entity, Enemy):
+
+    """
+    
+    Metodos de los monstruos del juego
+    
+    """
+
     def __init__(self, pos, groups, path, collision_sprites, health, player, shot_speed, animations):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
 
@@ -93,11 +130,17 @@ class Monster(Entity, Enemy):
         self.is_shooting = False
     
     def check_death(self):
+        # Comprueba la muerte, y mata la barra de vida en caso verdadero
         super().check_death()
         if self.health <= 0:
             self.healthBar.kill()
 
     def collision(self, dir):
+        """
+        
+        Comprueba su colision con las hitbox de otros objetos. Es la misma que la del player
+        
+        """
         for sprite in self.collision_sprites.sprites():
             if sprite.hitbox.colliderect(self.hitbox):
                 if dir == "horizontal":
@@ -116,15 +159,18 @@ class Monster(Entity, Enemy):
                     self.pos.y = self.hitbox.centery
 
     def vulnerability_timer(self):
+        # Tiempo en el que es invulnerable
         if not self.is_vulnerable:
             current_time = pygame.time.get_ticks()
             if current_time - self.hit_time > 40:
                 self.is_vulnerable = True
     
     def giveHealthBar(self, healthBar: HealthBar):
+        # Le da una healthbar al monstruo
         self.healthBar = healthBar
 
     def update(self, dt):
+        # Si el jugador no esta muerto, hacer que el monstruo ejecute las funciones correspondientes: atacar, ir hacia el, actualizar su barra de vida, comprobar si muere...
         if self.player.status != "death":
             self.face_player()
             self.walk_to_player()
@@ -140,6 +186,11 @@ class Monster(Entity, Enemy):
 
 
 class MonsterCrossBow(Monster, Distance):
+    """
+    
+    Clase especifica para los monstruos con ballesta. Se seleccionan sus animaciones, su rango de ataque, velocidad y balas
+    
+    """
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
         path = PATHS[name] + "crossbow.png"
         health = 5
@@ -154,6 +205,13 @@ class MonsterCrossBow(Monster, Distance):
         self.bullet_groups = bullet_groups
 
     def animate(self, dt):
+
+        """
+        
+        Realiza la animacion del disparo con ballesta. Similar a la animacion hecha con las armas de rango en el player
+        
+        """
+
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
@@ -185,6 +243,11 @@ class MonsterCrossBow(Monster, Distance):
 
 
 class MonsterBow(Monster, Distance):
+    """
+    
+    Clase especifica para los monstruos con arco. Se seleccionan sus animaciones, su rango de ataque, velocidad y balas
+    
+    """
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
         path = PATHS[name] + "bow.png"
         health = 5
@@ -199,6 +262,11 @@ class MonsterBow(Monster, Distance):
         self.bullet_groups = bullet_groups
 
     def animate(self, dt):
+        """
+        
+        Realiza la animacion del disparo con arco. Similar a la animacion hecha con las armas de rango en el player
+        
+        """
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
@@ -230,6 +298,11 @@ class MonsterBow(Monster, Distance):
 
 
 class MonsterStaff(Monster, Distance):
+    """
+    
+    Clase especifica para los monstruos con baston. Se seleccionan sus animaciones, su rango de ataque, velocidad y balas
+    
+    """
     def __init__(self, pos, groups, name, collision_sprites, player, bullet_groups):
         path = PATHS[name] + "magicStaff.png"
         health = 5
@@ -244,6 +317,11 @@ class MonsterStaff(Monster, Distance):
         self.bullet_groups = bullet_groups
 
     def animate(self, dt):
+        """
+        
+        Realiza la animacion del disparo con baston. Similar a la animacion hecha con las armas de rango en el player
+        
+        """
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
@@ -277,6 +355,11 @@ class MonsterStaff(Monster, Distance):
 
 
 class MonsterSword(Monster, Melee):
+    """
+    
+    Clase especifica para los monstruos con espada. Se seleccionan sus animaciones, su rango de ataque, velocidad y balas
+    
+    """
     def __init__(self, pos, groups, name, collision_sprites, player):
         path = PATHS[name] + "sword.png"
         health = 10
@@ -288,6 +371,11 @@ class MonsterSword(Monster, Melee):
         self.speed = 10
 
     def animate(self, dt):
+        """
+        
+        Realiza la animacion del ataque con la espada. Similar a la animacion hecha con las armas meles en el player
+        
+        """
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
@@ -306,6 +394,12 @@ class MonsterSword(Monster, Melee):
 
 
 class MonsterBoss(Monster, Melee):
+    """
+    
+    Clase especifica para el boss final. Se seleccionan sus animaciones, su rango de ataque, velocidad y balas
+    Tambien se especifica su transformacion
+    
+    """
     def __init__(self, pos, groups, path, collision_sprites, health, player,shot_speed, animations):
         
         super().__init__(pos, groups, path, collision_sprites, health, player,shot_speed, animations)
@@ -316,6 +410,11 @@ class MonsterBoss(Monster, Melee):
         self.maxHealth = health
 
     def animate(self, dt):
+        """
+        
+        Realiza la animacion del ataque del boss. Similar a la animacion hecha con las armas meles en el player
+        
+        """
         current_animation = self.animations[self.status]
 
         self.frame_index += 7 * dt
@@ -333,7 +432,10 @@ class MonsterBoss(Monster, Melee):
         self.mask = pygame.mask.from_surface(self.image)
     
     def check_death(self):
+        # Comprueba si no se ha transformado, y si no lo ha hecho, se transforma.
         if not self.transformation and self.health < (self.maxHealth/2):
             self.transformation = True
             self.changeSprite(PATHS["bossH"], AXE_ANIMATIONS)
+        
+        # Comprueba su muerte
         super().check_death()
