@@ -40,62 +40,72 @@ class Director:
         self.spriteList = []
 
     def run(self):
-
         self.clock = pygame.time.Clock()
 
-        self.bosque_setup()
-
+        self.level_setup('bosque')
         while self.current_zone != None:
             self.current_zone.setup()
             self.loop()
             self.tutorial = False
             self.current_zone = self.current_zone.next_zone()
-        
-        
-        self.reset('tienda')
-        self.shop = True
-        
-        self.shop_setup()
-        
-        self.current_zone = Zone3(self)
-        
 
-        while self.current_zone != None:
-            self.current_zone.setup()
-            self.loop()
-            self.current_zone = self.current_zone.next_zone()
-
-        self.shop = False
-        self.reset('pueblo')
-
-        self.pueblo_setup()
-
-        while self.current_zone != None:
-            self.current_zone.setup()
-            self.loop()
-            self.current_zone = self.current_zone.next_zone()
-
-        self.reset('tienda')
-        self.shop = True
-
-        self.shop_setup()
-        self.current_zone = Zone3(self)
-
-        while self.current_zone != None:
-            self.current_zone.setup()
-            self.loop()
-            self.current_zone = self.current_zone.next_zone()
-        self.shop = False
-        self.reset('tumba')
-
-        self.level_setup()
-
-        while self.current_zone != None:
-            self.current_zone.setup()
-            self.loop()
-            self.current_zone = self.current_zone.next_zone()
-            
+        for level in ['tienda', 'pueblo', 'tienda', 'tumba']:
+            self.reset(level)
+            self.shop = not self.shop
+            self.level_setup(level, self.player.money, self.player.weapon)
+            if self.shop:
+                self.current_zone = Zone3(self)
+            while self.current_zone != None:
+                self.current_zone.setup()
+                self.loop()
+                self.current_zone = self.current_zone.next_zone()
         victory(self)
+
+    def level_setup(self, level, money=0, weapon='crossbow'):
+        self.block = []
+
+        for layer, has_collisions in MAP_LAYERS[level]:
+            temp_list = []
+            groups = [self.all_sprites, self.colliders] if has_collisions else self.all_sprites
+            block = layer == 'bloqueo'
+            for x, y, surf in self.get_map_layer(layer).tiles():
+                sprite = Sprite((x * 16, y * 16), surf, groups)
+                temp_list.append(sprite)
+                if block:
+                    self.block.append(sprite)
+            self.spriteList.append(temp_list)
+
+        temp_list = []
+        for obj in self.get_map_layer("player"):
+            if obj.name == "Player":
+                self.player = Player(
+                    pos=(obj.x, obj.y),
+                    groups=self.all_sprites,
+                    path=PATHS[weapon+"P"],
+                    collision_sprites=self.colliders,
+                    health = 10,
+                    death = self.death,
+                    start_scroll = self.start_scroll,
+                    animations = ANIMATIONS[weapon],
+                    weapon_sprites=self.weapons,
+                    enemies=self.enemy,
+                    bullet_groups=self.get_bullet_groups(),
+                    hearts=self.hearts,
+                    coins=self.coins,
+                    money=money,
+                    weapon = weapon
+                )
+                temp_list.append(self.player)
+
+                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
+                self.player.attach(healthBar)
+                self.player.healthBar = healthBar
+        self.spriteList.append(temp_list)
+
+        if not self.shop:
+            pygame.mixer.music.unload()
+            pygame.mixer.music.load(f"audio/{level}.mp3")
+            pygame.mixer.music.play(-1,0.0) 
 
 
     def reset(self, map):
@@ -217,248 +227,6 @@ class Director:
 
             pygame.display.update()
 
-    def level_setup(self):
-        temp = self.player.money
-        temp2 = self.player.weapon
-        temp3 = ANIMATIONS[temp2]
-        
-        self.block = []
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("intermedio").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("bloqueo").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            self.block.append(sprite)
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("objetos").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("runas").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-        new_list = []
-        for obj in self.get_map_layer("player"):
-            if obj.name == "Player":
-                self.player = Player(
-                    pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
-                    path=PATHS[temp2+"P"],
-                    collision_sprites=self.colliders,
-                    health = 10,
-                    death = self.death,
-                    start_scroll = self.start_scroll,
-                    animations=temp3,
-                    weapon_sprites=self.weapons,
-                    enemies=self.enemy,
-                    bullet_groups=self.get_bullet_groups(),
-                    hearts=self.hearts,
-                    coins=self.coins,
-                    money=temp,
-                    weapon = temp2
-                )
-
-                new_list.append(self.player)
-
-
-                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
-                self.player.attach(healthBar)
-                self.player.healthBar = healthBar
-                pygame.mixer.music.unload()
-                pygame.mixer.music.load("audio/cementerio.mp3")
-                pygame.mixer.music.play(-1,0.0) 
-
-        self.spriteList.append(new_list)
-
-    def shop_setup(self):
-        temp = self.player.money
-        temp2 = self.player.weapon
-        temp3 = ANIMATIONS[temp2]
-        self.block = []
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("Fondo").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-        
-        new_list = []
-        for x, y, surf in self.get_map_layer("Base").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-        new_list = []
-        for x, y, surf in self.get_map_layer("Colisionables").tiles():
-            sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-            new_list.append(sprite)
-        self.spriteList.append(new_list)
-
-
-
-        new_list = []
-        for obj in self.get_map_layer("player"):
-            if obj.name == "Player":
-                self.player = Player(
-                    pos=(obj.x, obj.y),
-                    groups=self.all_sprites,
-                    path=PATHS[temp2+"P"],
-                    collision_sprites=self.colliders,
-                    health = 10,
-                    death = self.death,
-                    start_scroll = self.start_scroll,
-                    animations=temp3,
-                    weapon_sprites=self.weapons,
-                    enemies=self.enemy,
-                    bullet_groups=self.get_bullet_groups(),
-                    hearts=self.hearts,
-                    coins=self.coins,
-                    money=temp,
-                    weapon = temp2
-                )
-
-                new_list.append(self.player)
-                
-                healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
-                self.player.attach(healthBar)
-                self.player.healthBar = healthBar
-
-        self.spriteList.append(new_list)
-
-    def bosque_setup(self):
-            temp = 0
-            temp2 = "crossbow"
-            temp3 = ANIMATIONS[temp2]
-            
-            new_list = []
-            for x, y, surf in self.get_map_layer("Hierba").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Coli_3").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Coli_1").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Puertas").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Acc_agua").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            self.block = []
-
-            new_list = []
-            for obj in self.get_map_layer("player"):
-                if obj.name == "Player":
-                    self.player = Player(
-                        pos=(obj.x, obj.y),
-                        groups=self.all_sprites,
-                        path=PATHS[temp2+"P"],
-                        collision_sprites=self.colliders,
-                        health = 10,
-                        death = self.death,
-                        start_scroll = self.start_scroll,
-                        animations=temp3,
-                        weapon_sprites=self.weapons,
-                        enemies=self.enemy,
-                        bullet_groups=self.get_bullet_groups(),
-                        hearts=self.hearts,
-                        coins=self.coins,
-                        money=temp,
-                        weapon = temp2
-                    )
-
-                    new_list.append(self.player)
-                    
-                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
-                    self.player.attach(healthBar)
-                    self.player.healthBar = healthBar
-                    pygame.mixer.music.unload()
-                    pygame.mixer.music.load("audio/bosque.mp3")
-                    pygame.mixer.music.play(-1,0.0) 
-
-            self.spriteList.append(new_list)
-    
-    def pueblo_setup(self):
-            temp = self.player.money
-            temp2 = self.player.weapon
-            temp3 = ANIMATIONS[temp2]
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Segunda base").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, self.all_sprites)
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-            new_list = []
-            for x, y, surf in self.get_map_layer("Coli").tiles():
-                sprite = Sprite((x * 16, y * 16), surf, [self.all_sprites, self.colliders])
-                new_list.append(sprite)
-            self.spriteList.append(new_list)
-
-
-            self.block = []
-
-            new_list = []
-            for obj in self.get_map_layer("player"):
-                if obj.name == "Player":
-                    self.player = Player(
-                        pos=(obj.x, obj.y),
-                        groups=self.all_sprites,
-                        path=PATHS[temp2+"P"],
-                        collision_sprites=self.colliders,
-                        health = 10,
-                        death = self.death,
-                        start_scroll = self.start_scroll,
-                        animations=temp3,
-                        weapon_sprites=self.weapons,
-                        enemies=self.enemy,
-                        bullet_groups=self.get_bullet_groups(),
-                        hearts=self.hearts,
-                        coins=self.coins,
-                        money=temp,
-                        weapon = temp2
-                    )
-
-                    new_list.append(self.player)
-                    
-                    healthBar = HealthBar(0, WINDOW_HEIGHT-25, 250, 50, 10, self.healthBar)
-                    self.player.attach(healthBar)
-                    self.player.healthBar = healthBar
-                    pygame.mixer.music.unload()
-                    pygame.mixer.music.load("audio/pueblo.mp3")
-                    pygame.mixer.music.play(-1,0.0) 
-
-            self.spriteList.append(new_list)
-
-
     def death(self):
         self.player_death = True
 
@@ -499,25 +267,6 @@ class Director:
     def get_bullet_groups(self):
         return [self.all_sprites, self.bullets]
 
-    def load_boss(self):
-        for obj in self.tmx_map.get_layer_by_name("boss"):
-            if obj.name == "Boss":
-                self.monster = MonsterBoss(
-                    pos=(obj.x, obj.y),
-                    groups=[self.all_sprites, self.enemy],
-                    path=PATHS["bossN"],
-                    collision_sprites=self.colliders,
-                    health = 20,
-                    player=self.player,
-                    shot_speed=500,
-                    animations=AXE_ANIMATIONS
-                )
-                w = self.monster.image.get_size()[0]
-                h = self.monster.image.get_size()[1]
-                healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, 20, self.healthBar)
-                self.monster.attach(healthBar)
-                self.monster.healthBar = healthBar
-
 
 class AllSprites(pygame.sprite.Group):
     def __init__(self, map):
@@ -542,22 +291,6 @@ class AllSprites(pygame.sprite.Group):
             case 'pueblo': self.bg_surf = ResourceManager.load('background_bosque')
             
         self.bg_rect = self.bg_surf.get_rect(topleft=(0, 0))
-
-    # def custom_draw(self, list):
-    #     self.internal_surf.fill("black")
-
-    #     bg_offset = self.bg_rect.topleft + self.internal_offset
-    #     self.internal_surf.blit(self.bg_surf, bg_offset)
-
-    #     # active elements
-    #     for sprite in sorted(self.sprites(), key=lambda sprite: sprite.rect.centery):
-    #         offset_pos = sprite.rect.topleft + self.internal_offset
-    #         self.internal_surf.blit(sprite.image, offset_pos)
-
-    #     scaled_surf = pygame.transform.scale(self.internal_surf, self.internal_surf_size * self.zoom_scale)
-    #     scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
-
-    #     self.display_surface.blit(scaled_surf, scaled_rect)
 
     def shop_draw(self, list, bullets, enemies, coins, hearts, weapons):
         self.internal_surf.fill("black")
@@ -597,4 +330,3 @@ class AllSprites(pygame.sprite.Group):
         scaled_rect = scaled_surf.get_rect(center=(self.half_w, self.half_h))
 
         self.display_surface.blit(scaled_surf, scaled_rect)
-

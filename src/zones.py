@@ -56,7 +56,7 @@ class Zone(Observer):
     def spawnCoin(self, pos):
         Heart(pos, ResourceManager.load("coin"), [self.director.all_sprites, self.director.coins])
 
-    def update(self, subject: Subject) -> None:
+    def update(self, subject: Subject):
         if (subject.health <= 0):
             self.enemy_counter -= 1
             if random.randint(1,10) <= 5:
@@ -94,7 +94,27 @@ class Zone3(Zone):
     def setup(self):
         self.setup_enemy()
         self.setup_weapons()
-        self.director.load_boss()
+        self.load_boss()
 
     def next_zone(self):
         return None
+
+    def load_boss(self):
+        for obj in self.director.get_map_layer("boss"):
+            monster = MonsterBoss(
+                pos=(obj.x, obj.y),
+                groups=[self.director.all_sprites, self.director.enemy],
+                path=PATHS["bossN"],
+                collision_sprites=self.director.colliders,
+                health = 20,
+                player=self.director.player,
+                shot_speed=500,
+                animations=AXE_ANIMATIONS
+            )
+            w = monster.image.get_size()[0]
+            h = monster.image.get_size()[1]
+            healthBar = HealthBar(obj.x-int(w/2), obj.y+int(h/2), w, 5, monster.health, self.director.get_health_bar())
+            monster.attach(healthBar)
+            monster.attach(self)
+            monster.healthBar = healthBar
+            self.enemy_counter += 1

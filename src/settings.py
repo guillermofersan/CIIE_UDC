@@ -51,6 +51,12 @@ PATHS = {
 
 }
 
+MAP_LAYERS = {
+    'bosque': [('Hierba', False), ('Coli_3', True), ('Coli_1', True), ('Puertas', False), ('Acc_agua', True)],
+    'pueblo': [('Segunda base', False), ('Coli', True)],
+    'tumba': [('intermedio', False), ('bloqueo', False), ('objetos', True), ('runas', False)],
+    'tienda': [('Fondo', False), ('Base', False), ('Colisionables', True)]
+}
 
 SWORD_ANIMATIONS = {
     "10":"down.9",
