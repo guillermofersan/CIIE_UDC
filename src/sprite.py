@@ -3,6 +3,9 @@ from settings import *
 
 
 class Sprite(pygame.sprite.Sprite):
+    """
+    Carga sprites del mapa
+    """
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
         self.image = surf
@@ -11,6 +14,9 @@ class Sprite(pygame.sprite.Sprite):
 
 
 class Bullet(pygame.sprite.Sprite):
+    """
+    Carga los proyectiles
+    """
     def __init__(self, pos, dir, surf, groups):
         super().__init__(groups)
         self.image = surf
@@ -21,15 +27,20 @@ class Bullet(pygame.sprite.Sprite):
         self.speed = 200
 
     def update(self, dt):
+        # Hace update de su posicion en base a la velocidad y dt
         self.pos += self.dir * self.speed * dt
         self.rect.center = (round(self.pos.x), round(self.pos.y))
 
 
 class Weapon(pygame.sprite.Sprite):
+    """
+    Sprites de las armas
+    """
     def __init__(self, pos, surf, groups, name, price):
         super().__init__(groups)
         self.name = name
         self.image = surf
+        # Precio al comprarla
         self.price = price
         self.rect = self.image.get_rect(center=pos)
         self.hitbox = self.rect.inflate(0, -self.rect.height / 3)
@@ -37,10 +48,14 @@ class Weapon(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
 
     def taken(self):
+        # Al cogerla, desaparece
         self.kill()
 
 
 class Heart(pygame.sprite.Sprite):
+    """
+    Sprite del corazon
+    """
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
         self.image = surf
@@ -50,4 +65,5 @@ class Heart(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
 
     def taken(self):
+        # Al cogerlo, desaparece
         self.kill()
