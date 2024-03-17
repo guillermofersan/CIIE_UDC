@@ -8,7 +8,21 @@ from settings import PATHS
 from sprite import *
 
 class Enemy:
+
+    """
+    
+    Clase padre de todos los enemigos spawneados 
+    
+    """
+
     def get_player_distance_direction(self):
+
+        """
+        
+        
+
+        """
+
         enemy_pos = vector(self.rect.center)
         player_pos = vector(self.player.rect.center)
         distance = (player_pos - enemy_pos).magnitude()
