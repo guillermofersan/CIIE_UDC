@@ -121,6 +121,8 @@ class Player(Entity):
                 self.frame_index += 7 * dt  # Velocidad de animación para el hacha
             elif self.weapon == "spear":
                 self.frame_index += 30 * dt  # Velocidad de animación para la lanza
+            elif self.weapon == "staff":
+                self.frame_index += 14 * dt
             else:
                 self.frame_index += 14 * dt
 

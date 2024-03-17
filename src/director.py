@@ -61,7 +61,7 @@ class Director:
                 self.current_zone = self.current_zone.next_zone()
         victory(self)
 
-    def level_setup(self, level, money=0, weapon='crossbow'):
+    def level_setup(self, level, money=0, weapon='staff'):
         self.block = []
 
         for layer, has_collisions in MAP_LAYERS[level]:
