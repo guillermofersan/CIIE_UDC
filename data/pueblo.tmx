@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="4">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="9" nextobjectid="13">
  <tileset firstgid="1" source="tileset_bosque/Forest Tilesett.tsx"/>
  <tileset firstgid="221" source="tileset_pueblo/ground_demo.tsx"/>
  <tileset firstgid="477" source="tileset_pueblo/objects_demo.tsx"/>
@@ -171,10 +171,37 @@
 </data>
  </layer>
  <objectgroup id="5" name="enemy">
-  <object id="2" name="zombie2" x="264" y="267">
+  <object id="2" name="humano1" x="264" y="267">
    <point/>
   </object>
-  <object id="3" name="zombie2" x="592" y="540">
+  <object id="3" name="humano2" x="592" y="540">
+   <point/>
+  </object>
+  <object id="4" name="humano1" x="621.333" y="297.333">
+   <point/>
+  </object>
+  <object id="5" name="humano2" x="1114.67" y="193.333">
+   <point/>
+  </object>
+  <object id="6" name="humano2" x="1402.67" y="282.667">
+   <point/>
+  </object>
+  <object id="7" name="humano2" x="1818.67" y="600">
+   <point/>
+  </object>
+  <object id="8" name="humano2" x="2201.33" y="246.667">
+   <point/>
+  </object>
+  <object id="9" name="humano1" x="1076" y="570.667">
+   <point/>
+  </object>
+  <object id="10" name="humano1" x="2184" y="572">
+   <point/>
+  </object>
+  <object id="11" name="humano1" x="1873.33" y="220">
+   <point/>
+  </object>
+  <object id="12" name="humano1" x="1504" y="461.333">
    <point/>
   </object>
  </objectgroup>

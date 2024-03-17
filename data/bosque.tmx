@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="38">
+<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="150" height="50" tilewidth="16" tileheight="16" infinite="0" nextlayerid="24" nextobjectid="49">
  <tileset firstgid="1" source="tileset_bosque/Forest Tilesett.tsx"/>
  <tileset firstgid="221" source="tileset_bosque/Forest Cliff.tsx"/>
  <tileset firstgid="413" source="tileset_bosque/Water Tileset.tsx"/>
@@ -339,7 +339,37 @@
  </objectgroup>
  <objectgroup id="21" name="weapon"/>
  <objectgroup id="23" name="enemy">
-  <object id="13" name="zombie1" x="418" y="188">
+  <object id="13" name="zombie2" x="452.667" y="196">
+   <point/>
+  </object>
+  <object id="39" name="zombie1" x="492" y="445.333">
+   <point/>
+  </object>
+  <object id="40" name="zombie1" x="1048" y="245.333">
+   <point/>
+  </object>
+  <object id="41" name="zombie2" x="1462.67" y="530.667">
+   <point/>
+  </object>
+  <object id="42" name="esqueleto" x="1428" y="266.667">
+   <point/>
+  </object>
+  <object id="43" name="esqueleto" x="1050.67" y="542.667">
+   <point/>
+  </object>
+  <object id="44" name="zombie2" x="1830.67" y="282.667">
+   <point/>
+  </object>
+  <object id="45" name="zombie2" x="2197.33" y="329.333">
+   <point/>
+  </object>
+  <object id="46" name="zombie1" x="1833.33" y="568">
+   <point/>
+  </object>
+  <object id="47" name="zombie1" x="2132" y="629.333">
+   <point/>
+  </object>
+  <object id="48" name="zombie1" x="2276" y="478.667">
    <point/>
   </object>
  </objectgroup>
