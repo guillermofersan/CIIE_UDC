@@ -7,13 +7,67 @@ from settings import *
 from settings import PATHS
 from sprite import *
 
-class Enemy:
+
+
+class Melee:
 
     """
     
-    Clase padre de todos los enemigos spawneados 
+    Define el ataque a mele de los monstruos
+
+    """
+
+    def attack(self):
+        # Comprueba si puede atacar (distancia o ya estar atacando), y si ataca, cambia su estatus
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking:
+            self.is_attacking = True
+            self.frame_index = 0
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+class Distance:
+
+    """
+    
+    Define el ataque de rango  de los monstruos
+
+    """
+
+    def attack(self):
+        # Comprueba si puede atacar (distancia, velocidad de ataque, o ya estar atacando) , y si ataca, cambia su estatus
+        distance = self.get_player_distance_direction()[0]
+        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
+            self.is_attacking = True
+            self.frame_index = 0
+            self.is_shooting = False
+
+        if self.is_attacking:
+            self.status = self.status.split('_')[0] + '_attack'
+
+
+class Monster(Entity):
+
+    """
+    
+    Metodos de los monstruos del juego
     
     """
+
+    def __init__(self, pos, groups, path, collision_sprites, health, player, shot_speed, animations):
+        super().__init__(pos, groups, path, collision_sprites, health, animations)
+
+        self.player = player
+        self.shot_speed = shot_speed
+        self.shoot_time = 0
+
+        self.healthBar = None
+
+        self.is_shooting = False
+
+
 
     def get_player_distance_direction(self):
 
@@ -69,65 +123,6 @@ class Enemy:
             self.status = self.status.split('_')[0]
         else:
             self.dir = vector()
-
-
-class Melee:
-
-    """
-    
-    Define el ataque a mele de los monstruos
-
-    """
-
-    def attack(self):
-        # Comprueba si puede atacar (distancia o ya estar atacando), y si ataca, cambia su estatus
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking:
-            self.is_attacking = True
-            self.frame_index = 0
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
-
-class Distance:
-
-    """
-    
-    Define el ataque de rango  de los monstruos
-
-    """
-
-    def attack(self):
-        # Comprueba si puede atacar (distancia, velocidad de ataque, o ya estar atacando) , y si ataca, cambia su estatus
-        distance = self.get_player_distance_direction()[0]
-        if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
-            self.is_attacking = True
-            self.frame_index = 0
-            self.is_shooting = False
-
-        if self.is_attacking:
-            self.status = self.status.split('_')[0] + '_attack'
-
-
-class Monster(Entity, Enemy):
-
-    """
-    
-    Metodos de los monstruos del juego
-    
-    """
-
-    def __init__(self, pos, groups, path, collision_sprites, health, player, shot_speed, animations):
-        super().__init__(pos, groups, path, collision_sprites, health, animations)
-
-        self.player = player
-        self.shot_speed = shot_speed
-        self.shoot_time = 0
-
-        self.healthBar = None
-
-        self.is_shooting = False
     
     def check_death(self):
         # Comprueba la muerte, y mata la barra de vida en caso verdadero
