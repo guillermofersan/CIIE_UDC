@@ -178,25 +178,22 @@
   </object>
  </objectgroup>
  <objectgroup id="11" name="weapon">
-  <object id="14" name="sword" x="281.5" y="423.5">
+  <object id="14" name="sword" x="315.5" y="418.833">
    <point/>
   </object>
-  <object id="15" name="mace" x="343.5" y="420">
+  <object id="16" name="bow" x="381" y="420.167">
    <point/>
   </object>
-  <object id="16" name="bow" x="409" y="423.5">
+  <object id="17" name="crossbow" x="446.834" y="419.833">
    <point/>
   </object>
-  <object id="17" name="crossbow" x="472.167" y="424.5">
-   <point/>
-  </object>
-  <object id="19" name="staff" x="313.167" y="467.333">
+  <object id="19" name="staff" x="314.5" y="466.666">
    <point/>
   </object>
   <object id="20" name="hacha" x="380.5" y="467.5">
    <point/>
   </object>
-  <object id="21" name="spear" x="448.5" y="467.5">
+  <object id="21" name="spear" x="447.833" y="468.167">
    <point/>
   </object>
  </objectgroup>
