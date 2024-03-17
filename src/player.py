@@ -99,7 +99,7 @@ class Player(Entity):
                 for sprite in self.weapon_sprites:
                     if sprite.hitbox.colliderect(self.hitbox) and self.money >= sprite.price:
                         self.changeWeapon(sprite.name)
-                        self.money-=sprite.price
+                        self.money-=3
                         sprite.kill()
 
 
