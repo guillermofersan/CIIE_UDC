@@ -1,21 +1,21 @@
-import time
-
 import pygame
 from pygame.math import Vector2 as vector
+
 from entity import Entity
-from os import walk
 from settings import *
 
+
 class Player(Entity):
-
     """
-    
+
     Clase encargada de la creacion del player y el manejo de sus atributos relacionados
-    
+
     """
 
-    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites, enemies, bullet_groups, hearts, coins, money, weapon):
+    def __init__(self, pos, groups, path, collision_sprites, health, death, start_scroll, animations, weapon_sprites,
+                 enemies, bullet_groups, hearts, coins, money, weapon):
         super().__init__(pos, groups, path, collision_sprites, health, animations)
+        self.bullet_dir = None
         self.death = death
         self.is_shooting = False
         self.create_bullet = self.create_arrow
@@ -34,16 +34,16 @@ class Player(Entity):
     def input(self):
 
         """
-        
+
         Comprueba las teclas pulsadas, y modifica el status y direccion correspondientes, o hace trigger de alguna accion.
-        
+
         """
 
         keys = pygame.key.get_pressed()
 
         if not self.is_attacking:
 
-            # Cambia direccions y derecha/izquierda
+            # Cambia direcciones y derecha/izquierda
             if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
                 self.dir.x = 1
                 self.status = 'right'
@@ -53,7 +53,7 @@ class Player(Entity):
             else:
                 self.dir.x = 0
 
-            # Cambia direccions y arriba/abajo
+            # Cambia direcciones y arriba/abajo
             if keys[pygame.K_UP] or keys[pygame.K_w]:
                 self.dir.y = -1
                 self.status = 'up'
@@ -63,45 +63,69 @@ class Player(Entity):
             else:
                 self.dir.y = 0
 
-            # Mecanica de disparos dependiente de si el arma es rango o mele
+            # Mecanica de disparos en base al arma
             if keys[pygame.K_SPACE]:
-                 match self.weapon:
+                match self.weapon:
                     case "bow" | "crossbow" | "staff":
                         self.is_attacking = True
                         self.dir = vector()
                         self.frame_index = 0  # empieza la animación desde el primer frame
                         self.is_shooting = False
                         match self.status.split("_")[0]:
-                            case "left": self.bullet_dir = vector(-1, 0)
-                            case "right": self.bullet_dir = vector(1, 0)
-                            case "up": self.bullet_dir = vector(0, -1)
-                            case "down": self.bullet_dir = vector(0, 1)
-                    
-                    case "sword" | "mace" | "hacha" | "spear" | "latigo":
-                        self.is_attacking = True
-                        self.frame_index = 0 
+                            case "left":
+                                self.bullet_dir = vector(-1, 0)
+                            case "right":
+                                self.bullet_dir = vector(1, 0)
+                            case "up":
+                                self.bullet_dir = vector(0, -1)
+                            case "down":
+                                self.bullet_dir = vector(0, 1)
 
-            # Mecanica de compra
+                    case "sword" | "hacha" | "spear":
+                        self.is_attacking = True
+                        self.frame_index = 0
+
+            # Mecánica de compra
             if keys[pygame.K_e]:
                 for sprite in self.weapon_sprites:
                     if sprite.hitbox.colliderect(self.hitbox) and self.money >= 3:
-                        self.changeWeapon(sprite.name)
-                        self.money-=3
+                        self.change_weapon(sprite.name)
+                        self.money -= 3
                         sprite.kill()
 
-
-
-    def changeWeapon(self, name):
+    def change_weapon(self, name):
         # Cambia el arma y su sprite correspondiente
         self.weapon = name
-        self.changeSprite(PATHS[(name+"P")], ANIMATIONS[name])
+        self.changeSprite(PATHS[(name + "P")], ANIMATIONS[name])
 
+    def melee_attack(self, damage_multiplier):
+        if self.is_attacking and int(self.frame_index) == 4 and self.status != "death":
+            collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+            if collisions:
+                collisions[0].damage(self.base_dmg * damage_multiplier)
+
+    def ranged_attack(self, create_func):
+        if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
+            bullet_offset = self.rect.center + self.bullet_dir * 35
+            direction = self.status.split("_")[0]
+            if direction in ["left", "right"]:
+                bullet_offset[1] += 10
+            if direction in ["up", "down"]:
+                bullet_offset[0] += 5 if direction == "up" else -5
+            if direction == "down":
+                bullet_offset[1] += 5
+            if direction == "left" and create_func == self.create_magic:
+                bullet_offset[0] -= 10
+            if direction == "right" and create_func == self.create_magic:
+                bullet_offset[0] += 10
+            create_func(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
+            self.is_shooting = True
 
     def animate(self, dt):
 
         # Realiza la animacion
 
-        # Aqui se coge la velocidad 
+        # Aqui se coge la velocidad
         current_animation = self.animations[self.status]
         if self.status == "death":
             self.frame_index += 7 * dt
@@ -118,92 +142,34 @@ class Player(Entity):
             else:
                 self.frame_index += 14 * dt
 
-
         match self.weapon:
-            # Crea las animaciones 
+            # Crea las animaciones
 
             # En las armas mele, se especifica su daño
 
             # En las armas rango, se crea la bala dependiendo de hacia donde esta mirando el personaje
 
             # Precondiciones de estar atacando, no disparando y no estar muerto
-            case "bow":
-                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
-                    bullet_offset = self.rect.center + self.bullet_dir*35
-                    match self.status.split("_")[0]:
-                            case "left":
-                                bullet_offset[1] = bullet_offset[1]+10
-                            case "right":
-                                bullet_offset[1] = bullet_offset[1]+10
-                            case "up":
-                                bullet_offset[0] = bullet_offset[0]+5
-                            case "down":
-                                bullet_offset[0] = bullet_offset[0]-5
-                                bullet_offset[1] = bullet_offset[1]+5
-                    self.create_bullet(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
-                    self.is_shooting = True
-            case "crossbow":
-                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
-                    bullet_offset = self.rect.center + self.bullet_dir*35
-                    match self.status.split("_")[0]:
-                            case "left":
-                                bullet_offset[1] = bullet_offset[1]+10
-                            case "right":
-                                bullet_offset[1] = bullet_offset[1]+10
-                            case "up":
-                                bullet_offset[0] = bullet_offset[0]+5
-                            case "down":
-                                bullet_offset[0] = bullet_offset[0]-5
-                                bullet_offset[1] = bullet_offset[1]+5
-                    self.create_bullet(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
-                    self.is_shooting = True
             case "sword":
-                if self.is_attacking and int(self.frame_index) == 4 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(self.base_dmg)
+                self.melee_attack(1)
             case "hacha":
-                if self.is_attacking and int(self.frame_index) == 4 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(self.base_dmg*2)
+                self.melee_attack(2)
             case "spear":
-                if self.is_attacking and int(self.frame_index) == 6 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(self.base_dmg*0.5)
-            case "mace":
-                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(2)
+                self.melee_attack(0.5)
+            case "bow" | "crossbow":
+                self.ranged_attack(self.create_bullet)
             case "staff":
-                if self.is_attacking and not self.is_shooting and int(self.frame_index) == 6 and self.status != "death":
-                    bullet_offset = self.rect.center + self.bullet_dir*35
-                    match self.status.split("_")[0]:
-                        case "left":
-                            bullet_offset[1] = bullet_offset[1]+10
-                            bullet_offset[0] = bullet_offset[0]-10
-                        case "right":
-                            bullet_offset[1] = bullet_offset[1]+10
-                            bullet_offset[0] = bullet_offset[0]+10
-                        case "up":
-                            bullet_offset[0] = bullet_offset[0]+5
-                        case "down":
-                            bullet_offset[0] = bullet_offset[0]-5
-                            bullet_offset[1] = bullet_offset[1]+5
-                    self.create_magic(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
-                    self.is_shooting = True
-            
+                self.ranged_attack(self.create_magic)
+
         # Si ya se acabo la animacion, vuelves a empezar
         # Si la animacion es la de muerte, te mueres
         if self.frame_index >= len(current_animation):
             self.frame_index = 0
             if self.status == "death":
                 self.death()
-                self.frame_index = len(current_animation)-1
+                self.frame_index = len(current_animation) - 1
 
-            # Acabaste de atacar
+            # Finaliza la animacion de ataque
             if self.is_attacking:
                 self.is_attacking = False
 
@@ -213,16 +179,16 @@ class Player(Entity):
     def collision(self, dir):
 
         """
-        
+
         Define colisiones y scroll
-        
+
         """
 
         # Define la posicion del player para la realizacion del scroll en los niveles
         if ((WINDOW_WIDTH - 80 < self.pos.x < WINDOW_WIDTH
              or WINDOW_WIDTH * 2 - 80 < self.pos.x < WINDOW_WIDTH * 2
              or WINDOW_WIDTH * 3 - 80 < self.pos.x < WINDOW_WIDTH * 3)
-            and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
+                and WINDOW_HEIGHT / 2 - 15 < self.pos.y < WINDOW_HEIGHT / 2 + 15):
             self.start_scroll()
 
         # Colision con el corazon, que hace kill al realizarse
@@ -236,13 +202,13 @@ class Player(Entity):
         # Colision con la moneda, que hace kill al realizarse
         for coin in self.coins.sprites():
             if coin.hitbox.colliderect(self.hitbox):
-                self.money +=1
+                self.money += 1
                 self.notify()
                 coin.kill()
 
         # Colisiones generales
         for sprite in self.collision_sprites.sprites():
-            #Comprueba las hitbox de los objetos entre si
+            # Comprueba las hitbox de los objetos entre si
 
             # Colisiones horizontales
             if sprite.hitbox.colliderect(self.hitbox):
@@ -269,18 +235,18 @@ class Player(Entity):
             current_time = pygame.time.get_ticks()
             if current_time - self.hit_time > 200:
                 self.is_vulnerable = True
-    
+
     def check_death(self):
         # Comprueba tu vida y cambia tu estatus si le toca
         if self.health <= 0:
             self.status = 'death'
 
     def update(self, dt):
-        
+
         """
-        
+
         Runea las funciones del personaje que se deben ejecutar en bucle
-        
+
         """
 
         self.input()

@@ -1,5 +1,3 @@
-import pygame
-from mainmenu import *
 from director import *
 
 if __name__ == "__main__":

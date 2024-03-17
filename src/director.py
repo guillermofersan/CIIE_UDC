@@ -1,16 +1,8 @@
-import sys
-import random
-import pygame
-
-from settings import *
-from resources import *
-from zones import *
-from utilities import *
-from healthBar import *
-from monster import *
-from button import *
 from mainmenu import *
+from player import *
 from victory import *
+from zones import *
+
 
 class Director:
 
@@ -61,7 +53,7 @@ class Director:
 
         """
         
-        Setupea el los niveles y los lanza en orden.
+        Hace el set-up de los niveles y los lanza en orden.
 
         """
 
@@ -92,7 +84,7 @@ class Director:
         victory(self)
 
     # Set up del nivel.
-    def level_setup(self, level, money=0, weapon='crossbow'):
+    def level_setup(self, level, money=0, weapon='staff'):
         self.block = []
 
         # Coge las layers del nivel correspondiente, crea sus sprites

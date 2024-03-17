@@ -1,7 +1,7 @@
-import pygame, sys
+import sys
+
 from button import *
 from resources import *
-
 
 
 def victory(director):
@@ -14,7 +14,7 @@ def victory(director):
     # Carga la musica
     pygame.mixer.init()
     pygame.mixer.music.load("audio/victoria.mp3")
-    pygame.mixer.music.play(-1,0.0) 
+    pygame.mixer.music.play(-1,0.0)
     
     # Coge el fondo
     BG = ResourceManager.load('victoria', type='image')

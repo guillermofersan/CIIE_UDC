@@ -1,11 +1,11 @@
-import pygame
 from pygame.math import Vector2 as vector
+
 from entity import Entity
-from os import walk
 from healthBar import HealthBar
 from settings import *
 from settings import PATHS
 from sprite import *
+
 
 class Enemy:
 
@@ -32,7 +32,7 @@ class Enemy:
         else:
             direction = vector()
             
-        return (distance, direction)
+        return distance, direction
 
     def face_player(self):
 
@@ -99,7 +99,8 @@ class Distance:
     """
 
     def attack(self):
-        # Comprueba si puede atacar (distancia, velocidad de ataque, o ya estar atacando) , y si ataca, cambia su estatus
+        # Comprueba si puede atacar (distancia, velocidad de ataque, o ya estar atacando) , y si ataca, cambia su
+        # estatus
         distance = self.get_player_distance_direction()[0]
         if distance < self.attack_radius and not self.is_attacking and (pygame.time.get_ticks() - self.shoot_time > self.shot_speed):
             self.is_attacking = True
@@ -170,7 +171,8 @@ class Monster(Entity, Enemy):
         self.healthBar = healthBar
 
     def update(self, dt):
-        # Si el jugador no esta muerto, hacer que el monstruo ejecute las funciones correspondientes: atacar, ir hacia el, actualizar su barra de vida, comprobar si muere...
+        # Si el jugador no esta muerto, hacer que el monstruo ejecute las funciones correspondientes: atacar,
+        # ir hacia el, actualizar su barra de vida, comprobar si muere...
         if self.player.status != "death":
             self.face_player()
             self.walk_to_player()

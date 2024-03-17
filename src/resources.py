@@ -3,8 +3,8 @@ from pytmx.util_pygame import load_pygame
 
 from settings import *
 
-class ResourceManager:
 
+class ResourceManager:
     """
     
     Clase que se dedica exclusivamente a cargar recursos
@@ -14,7 +14,7 @@ class ResourceManager:
     recursos = {}
 
     @classmethod
-    def load(self, name, is_path = False, type='image', fontsize=50):
+    def load(self, name, is_path=False, type='image', fontsize=50):
         # Carga los recursos
 
         path = name if is_path else PATHS[name]

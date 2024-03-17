@@ -1,12 +1,11 @@
-import pygame
-from pygame.math import Vector2 as vector
-from os import walk
 from math import sin
+
+from pygame.math import Vector2 as vector
+
 from observer import Observer, Subject
-from settings import *
-from utilities import *
 from resources import *
 from sprite import Bullet
+from utilities import *
 
 
 class Entity(pygame.sprite.Sprite, Subject):
