@@ -4,6 +4,12 @@ from abc import ABC, abstractmethod
 
 class Subject(ABC):
 
+    """
+    
+    Sujeto observado
+    
+    """
+
     @abstractmethod
     def attach(self, observer: Observer) -> None:
         pass
@@ -18,6 +24,12 @@ class Subject(ABC):
 
 
 class Observer(ABC):
+
+    """
+    
+    Observer
+
+    """
 
     @abstractmethod
     def update(self, subject: Subject) -> None:
