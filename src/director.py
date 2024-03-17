@@ -92,7 +92,7 @@ class Director:
         victory(self)
 
     # Set up del nivel.
-    def level_setup(self, level, money=0, weapon='staff'):
+    def level_setup(self, level, money=0, weapon='crossbow'):
         self.block = []
 
         # Coge las layers del nivel correspondiente, crea sus sprites
@@ -268,7 +268,7 @@ class Director:
         
                 # Actualizar los grupos
                 self.all_sprites.update(dt)
-                self.bullet_collision()
+                self.bullet_collision(self.player.weapon)
 
                 # Dibujar los grupos
                 self.display_surface.fill("black")
@@ -288,7 +288,7 @@ class Director:
                 # Texto para el precio de la tienda
                 if self.shop:
                     font = ResourceManager.load('menufont', type='font', fontsize=30)
-                    shop_text = font.render("Todo a 5", True, "White")
+                    shop_text = font.render("Todo a 3", True, "White")
                     shop_rect = shop_text.get_rect(center=(390, 100))
                     self.display_surface.blit(ResourceManager.load("coin"), (510, 92))
                     self.display_surface.blit(shop_text, shop_rect)
@@ -307,7 +307,7 @@ class Director:
     def death(self):
         self.player_death = True
 
-    def bullet_collision(self):
+    def bullet_collision(self, weapon):
         for wall in self.colliders:
             pygame.sprite.spritecollide(wall, self.bullets, True,  pygame.sprite.collide_mask)
 
@@ -317,7 +317,14 @@ class Director:
             if sprites:
                 bullet.kill()
                 for sprite in sprites:
-                    sprite.damage(1)
+                    match weapon:
+                        case "staff":
+                            sprite.damage(2)
+                        case "crossbow":
+                            sprite.damage(1)
+                        case "bow":
+                            sprite.damage(1)
+                    
 
         if pygame.sprite.spritecollide(self.player, self.bullets, True, pygame.sprite.collide_mask):
             self.player.damage(1)
