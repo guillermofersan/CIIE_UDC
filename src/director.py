@@ -34,6 +34,7 @@ class Director:
 
         self.player_death = False
         self.scroll = False
+        self.shop = False
 
         self.spriteList = []
 
@@ -50,6 +51,7 @@ class Director:
         
         
         self.reset('tienda')
+        self.shop = True
         
         self.shop_setup()
         
@@ -61,6 +63,7 @@ class Director:
             self.loop()
             self.current_zone = self.current_zone.next_zone()
 
+        self.shop = False
         self.reset('pueblo')
 
         self.pueblo_setup()
@@ -71,6 +74,7 @@ class Director:
             self.current_zone = self.current_zone.next_zone()
 
         self.reset('tienda')
+        self.shop = True
 
         self.shop_setup()
         self.current_zone = Zone3(self)
@@ -79,7 +83,7 @@ class Director:
             self.current_zone.setup()
             self.loop()
             self.current_zone = self.current_zone.next_zone()
-
+        self.shop = False
         self.reset('tumba')
 
         self.level_setup()
@@ -191,10 +195,16 @@ class Director:
                     bar.draw(self.display_surface, self.all_sprites.internal_offset.x)
                 
                 font = ResourceManager.load('font', type='font', fontsize=15)
-                defeat_text = font.render("x"+str(self.player.money), True, "White")
-                defeat_rect = defeat_text.get_rect(center=(30, 8))
-                self.display_surface.blit(defeat_text, defeat_rect)
+                coin_text = font.render("x"+str(self.player.money), True, "White")
+                coin_rect = coin_text.get_rect(center=(30, 8))
+                self.display_surface.blit(coin_text, coin_rect)
                 self.display_surface.blit(ResourceManager.load("coin"), (0, 0))
+                if self.shop == True:
+                    font = ResourceManager.load('menufont', type='font', fontsize=30)
+                    shop_text = font.render("Todo a 5", True, "White")
+                    shop_rect = shop_text.get_rect(center=(390, 100))
+                    self.display_surface.blit(ResourceManager.load("coin"), (510, 92))
+                    self.display_surface.blit(shop_text, shop_rect)
 
             pygame.display.update()
 
