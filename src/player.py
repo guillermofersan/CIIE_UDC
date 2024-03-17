@@ -1,3 +1,5 @@
+import time
+
 import pygame
 from pygame.math import Vector2 as vector
 from entity import Entity
@@ -21,6 +23,8 @@ class Player(Entity):
         self.hearts = hearts
         self.coins = coins
         self.money = money
+        self.base_dmg = 2
+        self.attack_speed = 5
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -111,7 +115,16 @@ class Player(Entity):
         if self.status == "death":
             self.frame_index += 7 * dt
         else:
-            self.frame_index += 14 * dt
+            # Cambiar la velocidad de la animación basada en el tipo de arma
+            if self.weapon == "sword":
+                self.frame_index += 20 * dt  # Velocidad de animación para la espada
+            elif self.weapon == "hacha":
+                self.frame_index += 7 * dt  # Velocidad de animación para el hacha
+            elif self.weapon == "spear":
+                self.frame_index += 50 * dt  # Velocidad de animación para la lanza
+            else:
+                self.frame_index += 14 * dt
+
 
         match self.weapon:
             case "bow":
@@ -145,15 +158,20 @@ class Player(Entity):
                     self.create_bullet(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
                     self.is_shooting = True
             case "sword":
-                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
+                if self.is_attacking and int(self.frame_index) == 4 and self.status != "death":
                     collisions = pygame.sprite.spritecollide(self, self.enemies, False)
                     if collisions:
-                        collisions[0].damage(2)
+                        collisions[0].damage(self.base_dmg)
+            case "hacha":
+                if self.is_attacking and int(self.frame_index) == 4 and self.status != "death":
+                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
+                    if collisions:
+                        collisions[0].damage(self.base_dmg*2)
             case "spear":
-                if self.is_attacking and  int(self.frame_index) == 6 and self.status != "death":
+                if self.is_attacking and int(self.frame_index) == 6 and self.status != "death":
                     collisions = pygame.sprite.spritecollide(self, self.enemies, False)
                     if collisions:
-                        collisions[0].damage(2)
+                        collisions[0].damage(self.base_dmg*0.5)
             case "mace":
                 if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
                     collisions = pygame.sprite.spritecollide(self, self.enemies, False)
@@ -176,16 +194,6 @@ class Player(Entity):
                             bullet_offset[1] = bullet_offset[1]+5
                     self.create_magic(bullet_offset, self.bullet_dir, self.status, self.bullet_groups)
                     self.is_shooting = True
-            case "hacha":
-                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(2)
-            case "latigo":
-                if self.is_attacking and  int(self.frame_index) == 4 and self.status != "death":
-                    collisions = pygame.sprite.spritecollide(self, self.enemies, False)
-                    if collisions:
-                        collisions[0].damage(2)
             
         if self.frame_index >= len(current_animation):
             self.frame_index = 0

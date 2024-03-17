@@ -17,7 +17,7 @@ class Zone(Observer):
 
     def is_in_zone(self, obj):
         return self.left_border < obj.x < self.right_border
-    
+
     def setup_weapons(self):
         for obj in self.director.get_map_layer("weapon"):
             # if self.is_in_zone(obj):
@@ -59,7 +59,7 @@ class Zone(Observer):
     def update(self, subject: Subject) -> None:
         if (subject.health <= 0):
             self.enemy_counter -= 1
-            if random.randint(1,10) <=5:
+            if random.randint(1,10) <= 5:
                 self.spawnHeart(subject.pos+(20, 0))
             else:
                 self.spawnCoin(subject.pos)
@@ -68,7 +68,7 @@ class Zone1(Zone):
     def __init__(self, director):
         super().__init__(director, 0, WINDOW_WIDTH)
 
-    def setup(self): 
+    def setup(self):
 
         self.setup_enemy()
         self.setup_weapons()
