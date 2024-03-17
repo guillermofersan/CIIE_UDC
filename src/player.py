@@ -24,7 +24,6 @@ class Player(Entity):
         self.coins = coins
         self.money = money
         self.base_dmg = 2
-        self.attack_speed = 5
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -117,11 +116,11 @@ class Player(Entity):
         else:
             # Cambiar la velocidad de la animación basada en el tipo de arma
             if self.weapon == "sword":
-                self.frame_index += 20 * dt  # Velocidad de animación para la espada
+                self.frame_index += 14 * dt  # Velocidad de animación para la espada
             elif self.weapon == "hacha":
                 self.frame_index += 7 * dt  # Velocidad de animación para el hacha
             elif self.weapon == "spear":
-                self.frame_index += 50 * dt  # Velocidad de animación para la lanza
+                self.frame_index += 30 * dt  # Velocidad de animación para la lanza
             else:
                 self.frame_index += 14 * dt
 
