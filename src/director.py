@@ -84,7 +84,7 @@ class Director:
         victory(self)
 
     # Set up del nivel.
-    def level_setup(self, level, money=0, weapon='staff'):
+    def level_setup(self, level, money=0, weapon='crossbow'):
         self.block = []
 
         # Coge las layers del nivel correspondiente, crea sus sprites
