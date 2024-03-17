@@ -97,7 +97,7 @@ class Player(Entity):
                         self.frame_index = 0 
             if keys[pygame.K_e]:
                 for sprite in self.weapon_sprites:
-                    if sprite.hitbox.colliderect(self.hitbox) and self.money >= sprite.price:
+                    if sprite.hitbox.colliderect(self.hitbox) and self.money >= 3:
                         self.changeWeapon(sprite.name)
                         self.money-=3
                         sprite.kill()
