@@ -2,7 +2,7 @@
 
 Videojuego en 2D creado con pygame para la asignatura de Contornos Inmersivos, Interactivos e de Entretemento
 
-#Instalación y ejecución
+## Instalación y ejecución
 
 Los requisitos principales del proyecto son tener instalado Python y la librer ́ıa Pygame.
 A continuaci ́on se muestra una sencilla gu ́ıa de instalaci ́on y ejecuci ́on del proyecto en un
